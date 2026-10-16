@@ -1,0 +1,11 @@
+# Ratevo Robots.txt
+User-agent: *
+Allow: /
+
+# Disallow private routes
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
+Disallow: /verify-otp
+
+Sitemap: https://ratevo.xoiex.com/sitemap.xml
