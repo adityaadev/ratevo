@@ -102,8 +102,8 @@ export default function BillingSuccess() {
     <div className="min-h-screen bg-bg py-16 px-4">
       <div className="max-w-md mx-auto">
         <div className="card p-8 text-center">
-          <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-green-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <div className="mx-auto w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
           </div>
@@ -118,7 +118,7 @@ export default function BillingSuccess() {
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--text-muted)]">Status</span>
-                <span className="font-medium text-green-400 capitalize">{details.subscription_status}</span>
+                <span className="font-medium text-white capitalize">{details.subscription_status}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--text-muted)]">Valid until</span>

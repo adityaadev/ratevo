@@ -18,9 +18,12 @@ export default function Home() {
             <p className="mt-6 text-base sm:text-lg text-[var(--text-muted)] max-w-[560px] mx-auto leading-relaxed">
               Customers scan a QR code, share real feedback, and get a ready-to-edit Google review draft in seconds.
             </p>
+            <p className="mt-6 text-base text-[var(--text-muted)] max-w-[640px] mx-auto leading-relaxed">
+              Ratevo is a web-based software (SaaS) that helps businesses collect customer feedback through QR codes and draft a Google review that the customer edits and posts themselves.
+            </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button variant="primary" size="lg" asChild>
-                <Link to="/signup">Start Free</Link>
+                <Link to="/signup">Get Started</Link>
               </Button>
               <Button variant="secondary" size="lg" asChild>
                 <Link to="/how-it-works">Learn More</Link>
@@ -38,7 +41,7 @@ export default function Home() {
                   <span className="text-sm font-medium text-[var(--text-muted)]">Rating</span>
                   <div className="flex items-center gap-1" aria-label="5 out of 5 stars">
                     {[1,2,3,4,5].map((n) => (
-                      <svg key={n} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <svg key={n} className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                     ))}
@@ -50,7 +53,7 @@ export default function Home() {
                     The staff was incredibly helpful and patient. They took the time to explain everything clearly and made sure I was comfortable throughout the entire process. The facility was clean and modern. Highly recommend!
                   </div>
                 </div>
-                <Button variant="primary" size="md" className="w-full sm:w-auto mt-2">
+                <Button variant="primary" size="md" className="w-full sm:w-auto mt-2" disabled>
                   Copy & Open Google Review
                 </Button>
               </div>
@@ -62,12 +65,12 @@ export default function Home() {
       <section className="py-16 lg:py-24 bg-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="inline-block px-3 py-1 text-xs font-semibold text-white bg-white/10 rounded-full mb-4">Launch Offer</span>
+            <span className="inline-block px-3 py-1 text-xs font-semibold text-white bg-white/10 rounded-full mb-4">Limited time offer</span>
             <h2 className="text-heading-lg font-bold text-white tracking-tight">
               Simple, transparent pricing
             </h2>
             <p className="mt-4 text-lg text-[var(--text-muted)]">
-              Start with a 7-day free trial. No credit card required. Cancel anytime.
+              No credit card required to start. Cancel anytime.
             </p>
           </div>
 
@@ -112,6 +115,32 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <section id="pricing" className="py-16 lg:py-24 bg-bg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-heading-lg font-bold text-white tracking-tight">
+              Frequently asked questions
+            </h2>
+          </div>
+          <div className="max-w-3xl mx-auto">
+            <div className="card p-6 space-y-4">
+              <FAQItem 
+                question="What payment methods do you accept?" 
+                answer="We accept all major payment methods through Cashfree: UPI, credit/debit cards, net banking, and wallets. All payments are processed in INR."
+              />
+              <FAQItem 
+                question="What's your refund policy?" 
+                answer="Monthly plan: no refund after activation except for a billing error (duplicate or wrong charge). Yearly plan: refund on request within 7 days of activation. Contact ratevo.business@gmail.com or WhatsApp to request. Refund review within 7 working days."
+              />
+              <FAQItem 
+                question="How does the monthly review cap work?" 
+                answer="Each business can generate up to 300 AI reviews per month. This resets at the start of each billing cycle. The limit applies per business, not per account."
+              />
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
@@ -130,5 +159,21 @@ function Step({ number, title, description, children }) {
         <p className="text-sm text-[var(--text-muted)] leading-relaxed">{description}</p>
       </div>
     </div>
+  )
+}
+
+function FAQItem({ question, answer }) {
+  return (
+    <details className="group">
+      <summary className="flex items-center justify-between cursor-pointer list-none p-4 bg-white/5 rounded-xl">
+        <span className="font-medium text-white">{question}</span>
+        <svg className="w-5 h-5 text-[var(--text-subtle)] transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </summary>
+      <div className="px-4 pb-4 text-[var(--text-muted)] animate-slide-down">
+        {answer}
+      </div>
+    </details>
   )
 }

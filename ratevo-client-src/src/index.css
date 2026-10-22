@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #000000;
+  --surface: #0A0A0A;
+  --surface-hover: #111111;
+  --border: rgba(255,255,255,0.10);
+  --border-strong: rgba(255,255,255,0.20);
+  --text: #EDEDED;
+  --text-muted: #A1A1A1;
+  --text-subtle: #6B6B6B;
+  --white: #FFFFFF;
+  --error: #EE0000;
+  --error-bg: rgba(238,0,0,0.10);
+  --error-border: rgba(238,0,0,0.30);
+  --font-logo: 'Sora', 'Geist', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html {
+  font-family: 'Geist', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+a {
+  color: var(--white);
+  text-decoration: none;
+  transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+a:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+a:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: 4px;
+}
+
+input, textarea, select, button {
+  font-family: inherit;
+}
+
+input[type="number"] {
+  font-family: 'Geist Mono', 'Fira Code', monospace;
+}
+
+@layer components {
+  /* Legacy button classes - deprecated, use Button component instead */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-xl font-medium transition-all duration-fast focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-white text-black hover:bg-gray-200 focus:ring-white;
+  }
+  .btn-secondary {
+    @apply btn bg-transparent border border-white text-white hover:bg-white/10 focus:ring-white;
+  }
+  .btn-outline {
+    @apply btn border-2 border-white text-white hover:bg-white/10 focus:ring-white;
+  }
+  .btn-danger {
+    @apply btn bg-transparent border border-[var(--error)] text-[var(--error)] hover:bg-[var(--error-bg)] focus:ring-[var(--error)];
+  }
+
+  /* Legacy input classes - deprecated, use Input component instead */
+  .input {
+    @apply w-full px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-fast;
+  }
+  .label {
+    @apply block text-sm font-medium text-[var(--text-muted)] mb-1.5;
+  }
+
+  /* Legacy card classes - deprecated, use Card component instead */
+  .card {
+    @apply bg-[var(--surface)] rounded-2xl border border-[var(--border)] shadow-card;
+  }
+  .card-hover {
+    @apply card hover:shadow-card-hover transition-all duration-base;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .focus-visible-ring:focus-visible {
+    @apply outline-none ring-2 ring-white ring-offset-2 ring-offset-bg;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-subtle);
+  }
+
+  .mono {
+    font-family: 'Geist Mono', 'Fira Code', monospace;
+  }
+}

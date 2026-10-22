@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
     setError(null)
     setLoading(true)
     try {
-      const clientUrl = import.meta.env.VITE_CLIENT_URL || window.location.origin
+      const clientUrl = import.meta.env.VITE_APP_URL || import.meta.env.VITE_CLIENT_URL || window.location.origin
       const { data, error } = await supabase.auth.signUp({ 
         email, 
         password,
@@ -133,7 +133,7 @@ export function AuthProvider({ children }) {
     setError(null)
     setLoading(true)
     try {
-      const clientUrl = import.meta.env.VITE_CLIENT_URL || window.location.origin
+      const clientUrl = import.meta.env.VITE_APP_URL || import.meta.env.VITE_CLIENT_URL || window.location.origin
       const redirectTo = `${clientUrl}/dashboard`
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',

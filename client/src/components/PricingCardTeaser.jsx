@@ -29,7 +29,7 @@ export function PricingCardTeaser({ plan }) {
           </p>
         )}
         {isYearly && (
-          <p className="mt-1 text-sm text-green-400">
+          <p className="mt-1 text-sm text-white">
             Billed yearly: {formatAmount(plan.amountPaise)}
           </p>
         )}

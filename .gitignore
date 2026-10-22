@@ -28,3 +28,13 @@ Thumbs.db
 
 # Test coverage
 coverage/
+
+# Test results
+client/test-results/
+
+# Zip archives
+*.zip
+
+# Test scratch files
+test-*.mjs
+test-*.js

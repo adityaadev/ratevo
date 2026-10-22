@@ -27,7 +27,7 @@ export class ErrorBoundary extends Component {
             <p className="mt-2 text-[var(--text-muted)]">We&apos;re sorry, but an unexpected error occurred.</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-500 transition-colors"
+              className="mt-6 px-4 py-2 bg-white text-black rounded-xl font-medium hover:bg-white/90 transition-colors"
             >
               Reload Page
             </button>

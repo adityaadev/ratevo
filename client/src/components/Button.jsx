@@ -2,7 +2,7 @@ import { forwardRef, isValidElement, cloneElement } from 'react'
 import { cn } from '../utils/helpers'
 
 const variantStyles = {
-  primary: 'bg-white text-black hover:bg-gray-200 focus:ring-white',
+  primary: 'bg-white text-black hover:bg-white/90 focus:ring-white',
   secondary: 'bg-transparent border border-[var(--border-strong)] text-white hover:bg-[var(--surface-hover)] hover:border-white/30 focus:ring-white',
   outline: 'border border-[var(--border-strong)] text-white hover:bg-[var(--surface-hover)] hover:border-white/30 focus:ring-white',
   ghost: 'text-white hover:bg-white/10 focus:ring-white',

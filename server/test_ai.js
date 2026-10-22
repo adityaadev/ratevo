@@ -93,13 +93,12 @@ async function testModel(modelName) {
 async function main() {
   console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? 'SET' : 'NOT SET')
   
-  // Test current (wrong) model
+  // Test correct current model
   await testModel('gemini-3.8-flash')
   
-  // Test correct models
-  await testModel('gemini-1.5-flash')
-  await testModel('gemini-1.5-pro')
-  await testModel('gemini-1.0-pro')
+  // Test other current flash models
+  // await testModel('gemini-2.5-flash') // Uncomment to test
+  // await testModel('gemini-3.5-flash') // Uncomment to test
 }
 
 main()

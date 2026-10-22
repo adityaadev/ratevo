@@ -34,7 +34,7 @@ export default function AnalyticsPage() {
     return (
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-10 w-10 border-3 border-white border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
         </div>
       </div>
     )

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Button } from '../components'
 import { BILLING_CONFIG, getPlanFeatures, formatAmount } from '../config/billing'
+import { BUSINESS_CONFIG, getWhatsAppUrl } from '../config/business'
 
 export default function Pricing() {
   const plans = Object.values(BILLING_CONFIG.plans)
@@ -13,7 +14,10 @@ export default function Pricing() {
             Simple, transparent pricing
           </h1>
           <p className="mt-4 text-lg text-[var(--text-muted)]">
-            Start with a 7-day free trial. No credit card required. Cancel anytime.
+            No credit card required to start. Cancel anytime.
+          </p>
+          <p className="mt-4 text-base text-[var(--text-muted)] max-w-[640px] mx-auto leading-relaxed">
+            Ratevo is a web-based software (SaaS) that helps businesses collect customer feedback through QR codes and draft a Google review that the customer edits and posts themselves.
           </p>
         </div>
 
@@ -23,7 +27,7 @@ export default function Pricing() {
           ))}
         </div>
 
-        <div className="mt-16 max-w-3xl mx-auto">
+        <div className="mt-12 max-w-3xl mx-auto">
           <div className="card p-8">
             <h2 className="text-xl font-semibold text-white mb-6 text-center">What&apos;s included in all plans</h2>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[var(--text-muted)]">
@@ -71,32 +75,56 @@ export default function Pricing() {
           <h2 className="text-xl font-semibold text-white mb-6 text-center">Frequently asked billing questions</h2>
           <div className="card p-6 space-y-4">
             <FAQItem 
-              question="What happens after my 7-day free trial?" 
-              answer="After your trial ends, you'll need to choose a plan to continue using Ratevo. Your data and QR codes are preserved. If you don't upgrade, your account enters a 5-day grace period where customers can still leave reviews, but you can't generate new AI reviews."
-            />
-            <FAQItem 
               question="Can I switch plans later?" 
               answer="Yes, you can upgrade or downgrade at any time. Upgrades take effect immediately with prorated charges. Downgrades take effect at the end of your current billing period."
             />
             <FAQItem 
               question="What payment methods do you accept?" 
-              answer="We accept all major payment methods through Cashfree: UPI, credit/debit cards, net banking, and wallets. All payments are processed securely in INR."
-            />
-            <FAQItem 
-              question="Is GST included in the price?" 
-              answer={BILLING_CONFIG.showGstInclusive 
-                ? "Yes, all prices shown include 18% GST. You'll receive a GST-compliant receipt for each payment." 
-                : "No, prices shown exclude 18% GST which will be added at checkout."
-              }
+              answer="We accept all major payment methods through Cashfree: UPI, credit/debit cards, net banking, and wallets. All payments are processed in INR."
             />
             <FAQItem 
               question="What's your refund policy?" 
-              answer="We offer refunds for billing errors (duplicate charges, incorrect amounts) within 14 days. Service unavailability exceeding 48 hours may also qualify. See our Refund Policy for full details."
+              answer="Monthly plan: no refund after activation except for a billing error (duplicate or wrong charge). Yearly plan: refund on request within 7 days of activation. Contact ratevo.business@gmail.com or WhatsApp to request. Refund review within 7 working days."
             />
             <FAQItem 
               question="How does the monthly review cap work?" 
-              answer={`Each business can generate up to ${BILLING_CONFIG.monthlyReviewCap} AI reviews per month. This resets at the start of each billing cycle. The limit applies per business, not per account.`}
+              answer="Each business can generate up to 300 AI reviews per month. This resets at the start of each billing cycle. The limit applies per business, not per account."
             />
+          </div>
+        </div>
+
+        <div className="mt-12 max-w-4xl mx-auto">
+          <div className="card p-6 sm:p-8 text-center">
+            <h3 className="text-lg font-semibold text-white mb-3">Online payments are coming soon</h3>
+            <p className="text-[var(--text-muted)] mb-6 max-w-xl mx-auto">
+              To activate a plan now, message us on WhatsApp with the plan name and we&apos;ll set you up manually.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button variant="primary" size="lg" asChild>
+                <a 
+                  href={getWhatsAppUrl(`Hi, I'd like to activate the Monthly plan (₹99/month) for my business.`)}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.182.284-.528.248-.696-.038-.173-.381-.675-.708-1.379-.329-.709-.537-1.148-.64-1.31-.103-.162-.24-.316-.368-.465a4.43 4.43 0 0 0-.516-.381 4.71 4.71 0 0 0-.573-.242c-.417-.096-1.132-.116-1.694.103-.56.218-1.07.578-1.465 1.134-.395.556-.717 1.376-.89 2.023-.173.645-.223 1.307-.196 1.93.027.633.262 1.477.865 2.18.603.703 1.542 2.017 2.955 3.194 1.21 1.006 2.122 1.69 2.68 2.13.558.44 1.328.754 2.236.827.622.05 1.161-.144 1.374-.461.18-.266.26-.594.26-.918 0-.297-.018-.525-.037-.61zM12 2C6.477 2 2 6.477 2 12c0 2.368.881 4.533 2.34 6.207l-.928 3.506 3.63-.96c1.675.924 3.567 1.768 5.46 1.768 5.523 0 10-4.477 10-10S17.523 2 12 2z" />
+                  </svg>
+                  Activate Monthly Plan (₹99/mo)
+                </a>
+              </Button>
+              <Button variant="secondary" size="lg" asChild>
+                <a 
+                  href={getWhatsAppUrl(`Hi, I'd like to activate the Yearly plan (₹1,099/year) for my business.`)}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.182.284-.528.248-.696-.038-.173-.381-.675-.708-1.379-.329-.709-.537-1.148-.64-1.31-.103-.162-.24-.316-.368-.465a4.43 4.43 0 0 0-.516-.381 4.71 4.71 0 0 0-.573-.242c-.417-.096-1.132-.116-1.694.103-.56.218-1.07.578-1.465 1.134-.395.556-.717 1.376-.89 2.023-.173.645-.223 1.307-.196 1.93.027.633.262 1.477.865 2.18.603.703 1.542 2.017 2.955 3.194 1.21 1.006 2.122 1.69 2.68 2.13.558.44 1.328.754 2.236.827.622.05 1.161-.144 1.374-.461.18-.266.26-.594.26-.918 0-.297-.018-.525-.037-.61zM12 2C6.477 2 2 6.477 2 12c0 2.368.881 4.533 2.34 6.207l-.928 3.506 3.63-.96c1.675.924 3.567 1.768 5.46 1.768 5.523 0 10-4.477 10-10S17.523 2 12 2z" />
+                  </svg>
+                  Activate Yearly Plan (₹1,099/yr)
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -104,7 +132,7 @@ export default function Pricing() {
           <p className="text-[var(--text-muted)]">
             Need a custom plan or have questions?{' '}
             <Link to="/contact" className="text-white hover:underline font-medium">
-              Contact sales
+              Contact us
             </Link>
           </p>
         </div>
@@ -126,7 +154,7 @@ function PlanCard({ plan }) {
           </span>
         </div>
       )}
-      
+
       <div className="text-center mb-8">
         <h3 className="text-lg font-semibold text-white">{plan.name}</h3>
         <div className="mt-4 flex items-baseline justify-center gap-1">
@@ -139,7 +167,7 @@ function PlanCard({ plan }) {
           </p>
         )}
         {isYearly && (
-          <p className="mt-2 text-sm text-green-400">
+          <p className="mt-2 text-sm text-white">
             Billed yearly: {formatAmount(plan.amountPaise)}
           </p>
         )}

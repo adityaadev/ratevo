@@ -1,37 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ratevo.xoiex.com/</loc>
+    <loc>https://ratevo.site/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://ratevo.xoiex.com/login</loc>
+    <loc>https://ratevo.site/pricing</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ratevo.site/how-it-works</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ratevo.xoiex.com/signup</loc>
+    <loc>https://ratevo.site/faq</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ratevo.xoiex.com/terms</loc>
+    <loc>https://ratevo.site/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://ratevo.xoiex.com/privacy</loc>
+    <loc>https://ratevo.site/privacy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://ratevo.xoiex.com/refund</loc>
+    <loc>https://ratevo.site/refund</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://ratevo.xoiex.com/contact</loc>
+    <loc>https://ratevo.site/contact</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

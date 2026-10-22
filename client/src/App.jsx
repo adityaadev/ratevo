@@ -23,8 +23,6 @@ const Contact = lazy(() => import('./pages/Contact'))
 const Pricing = lazy(() => import('./pages/Pricing'))
 const HowItWorks = lazy(() => import('./pages/HowItWorks'))
 const FAQ = lazy(() => import('./pages/FAQ'))
-const BillingSuccess = lazy(() => import('./pages/BillingSuccess'))
-const BillingFailed = lazy(() => import('./pages/BillingFailed'))
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth()
@@ -32,7 +30,7 @@ function ProtectedRoute({ children }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
       </div>
     )
   }
@@ -50,7 +48,7 @@ function PublicOnlyRoute({ children }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
       </div>
     )
   }
@@ -75,7 +73,7 @@ function App() {
         <Route path="/pricing" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <Pricing />
@@ -84,7 +82,7 @@ function App() {
         <Route path="/how-it-works" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <HowItWorks />
@@ -93,34 +91,16 @@ function App() {
         <Route path="/faq" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <FAQ />
           </Suspense>
         } />
-        <Route path="/billing/success" element={
-          <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
-            </div>
-          }>
-            <BillingSuccess />
-          </Suspense>
-        } />
-        <Route path="/billing/failed" element={
-          <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
-            </div>
-          }>
-            <BillingFailed />
-          </Suspense>
-        } />
         <Route path="/terms" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <Terms />
@@ -129,7 +109,7 @@ function App() {
         <Route path="/privacy" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <Privacy />
@@ -138,7 +118,7 @@ function App() {
         <Route path="/refund" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <Refund />
@@ -147,7 +127,7 @@ function App() {
         <Route path="/contact" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <Contact />
@@ -159,7 +139,7 @@ function App() {
         <Route path="/dashboard" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <Dashboard />
@@ -168,7 +148,7 @@ function App() {
         <Route path="/dashboard/business" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <BusinessSetup />
@@ -177,7 +157,7 @@ function App() {
         <Route path="/dashboard/qr" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <QrCodePage />
@@ -186,7 +166,7 @@ function App() {
         <Route path="/dashboard/analytics" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <AnalyticsPage />
@@ -195,7 +175,7 @@ function App() {
         <Route path="/dashboard/settings" element={
           <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary-600 border-t-transparent"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
             </div>
           }>
             <BusinessSettings />
