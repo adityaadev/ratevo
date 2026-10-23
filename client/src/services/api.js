@@ -6,11 +6,21 @@ if (!API_URL) {
   throw new Error('VITE_API_URL environment variable is required')
 }
 
-async function request(endpoint, options = {}) {
-  const url = `${API_URL}${endpoint}`
-  // Get fresh token from Supabase client (handles auto-refresh)
+async function getValidToken() {
+  // 1. Try Supabase client (handles auto-refresh)
   const { data: { session } } = await supabase.auth.getSession()
-  const token = session?.access_token
+  if (session?.access_token) return session.access_token
+
+  // 2. Fallback to localStorage (set by onAuthStateChange)
+  const stored = localStorage.getItem('ratevo_token')
+  if (stored) return stored
+
+  return null
+}
+
+async function request(endpoint, options = {}, isRetry = false) {
+  const url = `${API_URL}${endpoint}`
+  const token = await getValidToken()
   
   const config = {
     headers: {
@@ -26,6 +36,19 @@ async function request(endpoint, options = {}) {
   }
 
   const response = await fetch(url, config)
+  
+  // On 401, try to refresh session and retry once
+  if (response.status === 401 && !isRetry) {
+    try {
+      const { data: { session }, error } = await supabase.auth.refreshSession()
+      if (!error && session?.access_token) {
+        // Retry with fresh token
+        return request(endpoint, options, true)
+      }
+    } catch {
+      // Refresh failed, fall through to throw
+    }
+  }
   
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Request failed' }))
