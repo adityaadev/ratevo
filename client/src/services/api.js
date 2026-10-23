@@ -1,3 +1,5 @@
+import { supabase } from '../lib/supabase'
+
 const API_URL = import.meta.env.VITE_API_URL
 
 if (!API_URL) {
@@ -6,7 +8,9 @@ if (!API_URL) {
 
 async function request(endpoint, options = {}) {
   const url = `${API_URL}${endpoint}`
-  const token = localStorage.getItem('ratevo_token')
+  // Get fresh token from Supabase client (handles auto-refresh)
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token
   
   const config = {
     headers: {
