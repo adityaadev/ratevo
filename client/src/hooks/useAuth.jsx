@@ -28,8 +28,6 @@ export function AuthProvider({ children }) {
   }, [])
 
   useEffect(() => {
-    fetchUser()
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUser(session.user)
@@ -42,7 +40,7 @@ export function AuthProvider({ children }) {
     })
 
     return () => subscription.unsubscribe()
-  }, [fetchUser])
+  }, [])
 
   const signup = async (email, password) => {
     setError(null)
