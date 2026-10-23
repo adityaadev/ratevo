@@ -10,7 +10,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "smoke": "playwright test --config=playwright.smoke.config.js"
+    "smoke": "playwright test --config=playwright.smoke.config.js",
+    "smoke:prod": "playwright test --config=playwright.production.config.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.0",
