@@ -1,7 +1,7 @@
 import express from 'express'
 import { supabase } from '../config/supabase.js'
 import { startReviewSchema, generateReviewSchema, trackEventSchema } from '../utils/validation.js'
-import { generateReview } from '../services/aiService.js'
+import { generateReview, MAX_GENERATIONS_PER_SESSION } from '../services/aiService.js'
 import { publicLimiter, aiLimiter } from '../middleware/rateLimiter.js'
 import { optionalAuth } from '../middleware/auth.js'
 import { v4 as uuidv4 } from 'uuid'
@@ -89,8 +89,8 @@ router.post('/generate/:sessionId', aiLimiter, async (req, res, next) => {
     }
     
     const generationCount = session.generation_count || 0
-    if (generationCount >= 3) {
-      return res.status(429).json({ message: 'Generation limit reached for this session (max 3)' })
+    if (generationCount >= MAX_GENERATIONS_PER_SESSION) {
+      return res.status(429).json({ message: `Generation limit reached for this session (max ${MAX_GENERATIONS_PER_SESSION})` })
     }
     
     const generatedReview = await generateReview(data)

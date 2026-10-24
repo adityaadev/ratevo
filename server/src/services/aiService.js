@@ -9,10 +9,10 @@ STRICT RULES:
 4. NEVER change negative sentiment to positive
 5. NEVER add information the customer didn't provide
 6. Write 2-4 sentences in natural customer voice
-7. Sound like a real person writing a review
-8. Avoid repetitive templates - vary your language
-9. Preserve the customer's actual sentiment (positive, neutral, or negative)
-10. Do not mention AI, Ratevo, or the review generation process
+12. Sound like a real person writing a review
+13. Avoid repetitive templates - vary your language
+14. Preserve the customer's actual sentiment (positive, neutral, or negative)
+15. Do not mention AI, Ratevo, or the review generation process
 
 EXAMPLES:
 
@@ -66,8 +66,16 @@ function extractRetryDelay(err) {
   return match ? parseInt(match[1], 10) : undefined
 }
 
-const GENERATION_TIMEOUT_MS = 15000
-const DEFAULT_MODEL = 'gemini-3.8-flash'
+// Fallback chain: primary → backup models (all support generateContent, non-preview)
+const MODEL_CHAIN = [
+  'gemini-3.8-flash',
+  'gemini-3.5-flash',
+  'gemini-2.5-flash',
+]
+const GENERATION_TIMEOUT_MS = 10000
+const DEFAULT_MODEL = MODEL_CHAIN[0]
+const MAX_GENERATIONS_PER_SESSION = 5
+const MAX_OUTPUT_TOKENS = 1024
 
 function withTimeout(promise, ms, label) {
   return Promise.race([
@@ -110,10 +118,25 @@ function getClientError(status, providerStatus, message) {
   return { status: 502, message: "We couldn't generate your review just now. Please try again." }
 }
 
-async function generateWithRetry(model, modelName, prompt, customerText, attempt = 1) {
+async function tryGenerateWithModel(genAI, modelName, prompt, customerText) {
   const startedAt = Date.now()
+  const model = genAI.getGenerativeModel({ model: modelName })
+  
   try {
-    const result = await withTimeout(model.generateContent(prompt), GENERATION_TIMEOUT_MS, 'Gemini generateContent')
+    const result = await withTimeout(
+      model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          maxOutputTokens: MAX_OUTPUT_TOKENS,
+          temperature: 0.7,
+          topP: 0.9,
+          topK: 40,
+          thinkingConfig: { thinkingBudget: 0 }, // disable thinking tokens
+        },
+      }),
+      GENERATION_TIMEOUT_MS,
+      'Gemini generateContent'
+    )
     const response = await withTimeout(result.response, GENERATION_TIMEOUT_MS, 'Gemini response')
     const text = response.text().trim()
     
@@ -128,7 +151,7 @@ async function generateWithRetry(model, modelName, prompt, customerText, attempt
       usage: response.usageMetadata || null,
     })
     
-    return text
+    return { text, modelName, durationMs: Date.now() - startedAt }
   } catch (err) {
     const upstream = extractUpstreamError(err, prompt, customerText)
     const isTimeout = err.message?.includes('timed out')
@@ -141,21 +164,41 @@ async function generateWithRetry(model, modelName, prompt, customerText, attempt
       errorStatus: providerStatus || status || 'UNKNOWN',
       message: upstream.message,
       durationMs: Date.now() - startedAt,
+      rawError: err?.message,
     })
     
-    if ((status === 429 || status === 503) && attempt === 1) {
-      const delay = extractRetryDelay(err) || 2000
-      console.warn(`Gemini ${status}, retrying in ${delay}ms...`)
-      await new Promise(r => setTimeout(r, delay))
-      return generateWithRetry(model, modelName, prompt, customerText, 2)
-    }
-    
-    const clientError = getClientError(status, providerStatus, upstream.message)
-    const error = new Error(clientError.message)
-    error.status = clientError.status
-    error.publicMessage = clientError.message
-    throw error
+    throw { status, providerStatus, message: upstream.message, isRetryable: status === 429 || status === 503 }
   }
+}
+
+async function generateWithFallback(genAI, prompt, customerText) {
+  let lastError = null
+  
+  for (let i = 0; i < MODEL_CHAIN.length; i++) {
+    const modelName = MODEL_CHAIN[i]
+    try {
+      const result = await tryGenerateWithModel(genAI, modelName, prompt, customerText)
+      if (i > 0) {
+        console.warn(`Fallback succeeded with ${modelName} (primary ${MODEL_CHAIN[0]} failed)`)
+      }
+      return result.text
+    } catch (err) {
+      lastError = err
+      if (!err.isRetryable) {
+        // Non-retryable error (400, 404, etc.) - don't try other models
+        break
+      }
+      // Retryable error (429, 503) - try next model immediately
+      console.warn(`Model ${modelName} returned ${err.status}, trying next model...`)
+    }
+  }
+  
+  // All models failed - return user-friendly error based on last error
+  const clientError = getClientError(lastError?.status, lastError?.providerStatus, lastError?.message)
+  const error = new Error(clientError.message)
+  error.status = clientError.status
+  error.publicMessage = clientError.message
+  throw error
 }
 
 export async function generateReview(input) {
@@ -165,11 +208,10 @@ export async function generateReview(input) {
     throw error
   }
 
-  const modelName = process.env.GEMINI_MODEL || DEFAULT_MODEL
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-  const model = genAI.getGenerativeModel({ model: modelName })
-  
   const prompt = `${SYSTEM_PROMPT}\n\n${buildPrompt(input)}`
   
-  return generateWithRetry(model, modelName, prompt, input.customer_text)
+  return generateWithFallback(genAI, prompt, input.customer_text)
 }
+
+export { MAX_GENERATIONS_PER_SESSION }

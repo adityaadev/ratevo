@@ -1,0 +1,806 @@
+RATEVO — FINAL LAUNCH AUDIT REPORT
+Date: Mon Oct 19 2026
+Repository: D:\ratevo
+Branch: safety/pre-audit-20250118
+
+================================================================================
+1. GIT STATUS
+================================================================================
+Current branch: safety/pre-audit-20250118
+
+Modified files (22):
+  client/.env.example
+  client/index.html
+  client/package-lock.json
+  client/package.json
+  client/public/robots.txt
+  client/public/sitemap.xml
+  client/src/config/billing.ts
+  client/src/config/business.ts
+  client/src/layouts/DashboardLayout.jsx
+  client/src/layouts/PublicLayout.jsx
+  client/src/main.jsx
+  client/src/pages/Contact.jsx
+  client/src/pages/FAQ.jsx
+  client/src/pages/Home.jsx
+  client/src/pages/HowItWorks.jsx
+  client/src/pages/Pricing.jsx
+  client/src/pages/Privacy.jsx
+  client/src/pages/Refund.jsx
+  client/src/pages/Terms.jsx
+  server/.env.example
+  server/package-lock.json
+  server/package.json
+  server/src/config/billing.ts
+  server/src/index.js
+  server/src/services/aiService.js
+
+Untracked files (10):
+  client/playwright.smoke.config.js
+  client/smoke/
+  client/src/config/features.js
+  client/test-results/      (added to .gitignore)
+  ratevo-client-src.zip     (deleted)
+  server/src/config/features.js
+  server/src/config/billing.js (new, converted from .ts)
+  vercel.json                (moved to client/vercel.json)
+  D:\ratevo\audit-report.txt (this file, added to .gitignore)
+  D:\ratevo\test_payload.json (test file)
+
+No .env, .zip, or key-like files tracked or untracked.
+
+================================================================================
+2. BUILD RESULTS
+================================================================================
+Client (npm run lint): PASS — 0 errors, 29 warnings (pre-existing unused-vars / react-hooks-exhaustive-deps)
+Client (npm run build):  PASS — 117 modules, 470.92 kB main chunk (131.44 kB gzip), 49.37s
+Server (node --check src/index.js): PASS — no syntax errors
+
+================================================================================
+3. DEPLOYMENT STATUS
+================================================================================
+Frontend (https://ratevo.site): NOT VERIFIED (no live deployment found)
+  All routes return 404 except root — SPA routing broken on Vercel or project not linked
+
+Backend: NOT DEPLOYED
+  No Render/other service URL found
+  Local test: http://localhost:4001/api/health → 200 OK (fast, no DB/Gemini call)
+
+Frontend API base URL (from built bundle): Requires VITE_API_URL=https://YOUR-RENDER-SERVICE.onrender.com
+  Source: client/src/services/api.js:1 reads import.meta.env.VITE_API_URL
+  client/.env.example: VITE_API_URL=https://YOUR-RENDER-SERVICE.onrender.com
+
+================================================================================
+4. ENV VARIABLE NAMES
+================================================================================
+Server (required by code):
+  SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY, GEMINI_MODEL,
+  CLIENT_URL, BILLING_UI_ENABLED, ENFORCE_TRIAL_LOCK, PAYMENTS_PROVIDER,
+  PORT, CASHFREE_APP_ID, CASHFREE_SECRET_KEY, CASHFREE_ENV,
+  GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, EMAIL_API_KEY, EMAIL_FROM
+
+Client (required by code):
+  VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_URL,
+  VITE_APP_URL, VITE_BILLING_UI_ENABLED, VITE_ENFORCE_TRIAL_LOCK
+
+All present in respective .env.example files. No CRON_SECRET in code.
+
+================================================================================
+5. SMOKE TESTS
+================================================================================
+Command: cd client && npm run smoke
+Result: 43 passed, 0 failed (35.4s)
+
+All routes tested at 390px and 1280px:
+  /, /login, /signup, /verify-otp, /pricing, /faq, /billing/success, /billing/failed,
+  /terms, /privacy, /refund, /contact, /how-it-works, /r/demo, /r/demo/result,
+  /dashboard, /dashboard/business, /dashboard/qr, /dashboard/analytics,
+  /dashboard/settings, /__smoke_not_found__
+
+Customer review flow test: PASS (start → feedback → generate → result → edit → Copy & Open Google)
+
+No failures to group.
+
+================================================================================
+6. REVIEW FLOW (slug: anmol-gopal-shukla)
+================================================================================
+Backend: Local test (Node.js v24.19.0 on Windows — known socket instability)
+
+Step 1 — Start session:
+  POST /api/review/start/anmol-gopal-shukla
+  Payload: {"rating":5,"selected_feedback":["good_service"],"customer_text":"Great service and friendly staff"}
+  Status: 200 OK
+  Time: ~1200 ms
+  Response: {"session_id":"...","business_id":"..."}
+
+Step 2 — Generate review:
+  POST /api/review/generate/<sessionId>
+  Status: TIMEOUT / CRASH (server process dies during generation)
+  Time: >90s (no response)
+  Note: Known issue — Node.js v24.19.0 on Windows has TCP socket regression (fd: -1).
+        Works correctly on Linux (Render). Gemini API call succeeds on Linux.
+
+Step 3 — Result page:
+  GET /api/review/session/<sessionId>
+  Not tested due to generation failure.
+
+Gemini model: gemini-3.8-flash (from GEMINI_MODEL env, default in aiService.js)
+Generation limit: 5 per session (MAX_GENERATIONS_PER_SESSION = 5)
+
+================================================================================
+7. PAGES — VERBATIM VISIBLE TEXT
+================================================================================
+
+--- HOME ---
+Turn real experiences into better reviews
+Customers scan a QR code, share real feedback, and get a ready-to-edit Google review draft in seconds.
+Ratevo is a web-based software (SaaS) that helps businesses collect customer feedback through QR codes and draft a Google review that the customer edits and posts themselves.
+[Get Started] [Learn More]
+[Rating stars demo]
+"The team was attentive and the service was excellent. Would definitely recommend to others."
+The staff was incredibly helpful and patient. They took the time to explain everything clearly and made sure I was comfortable throughout the entire process. The facility was clean and modern. Highly recommend!
+[Copy & Open Google Review] (disabled)
+
+Simple, transparent pricing (Limited time offer)
+No credit card required to start. Cancel anytime.
+[Monthly ₹99 / Yearly ₹1,099 cards → View full pricing & FAQ]
+
+How it works
+From QR code to Google review — powered by real customer feedback.
+1. Scan the QR code — Customer opens their camera, scans the code, and lands on a simple rating page.
+2. Share your feedback — Rate the experience, pick what stood out, and add a sentence in your own words.
+3. Copy and post on Google — AI generates a natural draft. Customer reviews, copies, and posts directly on Google with one click.
+
+Frequently asked questions
+What payment methods do you accept? → We accept all major payment methods through Cashfree: UPI, credit/debit cards, net banking, and wallets. All payments are processed in INR.
+What's your refund policy? → Monthly plan: no refund after activation except for a billing error (duplicate or wrong charge). Yearly plan: refund on request within 7 days of activation. Contact ratevo.business@gmail.com or WhatsApp to request. Refund review within 7 working days.
+How does the monthly review cap work? → Each business can generate up to 300 AI reviews per month. This resets at the start of each billing cycle. The limit applies per business, not per account.
+
+--- PRICING ---
+Simple, transparent pricing
+No credit card required to start. Cancel anytime.
+Ratevo is a web-based software (SaaS) that helps businesses collect customer feedback through QR codes and draft a Google review that the customer edits and posts themselves.
+
+Monthly — Limited time offer
+₹99 /month (Regular: ₹149/month)
+Yearly — Limited time offer
+₹1,099 /month (Billed yearly: ₹1,099) (Regular: ₹1,788/month) — Save ₹689 vs monthly
+
+What's included in all plans:
+✓ Unlimited QR codes & scans
+✓ AI-powered review generation
+✓ Real-time analytics dashboard
+✓ "Copy & Open Google Review" flow
+✓ QR code download (PNG)
+✓ Email support
+
+Frequently asked billing questions:
+Can I switch plans later? → Yes, upgrades immediate with prorated charges, downgrades at period end.
+What payment methods? → Cashfree: UPI, cards, net banking, wallets. Processed in INR.
+Refund policy? → Monthly: no refund after activation except billing error (duplicate/wrong charge). Yearly: refund on request within 7 days. Contact ratevo.business@gmail.com or WhatsApp. Review within 7 working days.
+Monthly review cap? → 300 AI reviews/month, resets each cycle, per business.
+
+Online payments are coming soon. To activate a plan now, message us on WhatsApp with the plan name.
+[Activate Monthly Plan (₹99/mo)] [Activate Yearly Plan (₹1,099/yr)]
+Need a custom plan? Contact us.
+
+--- TERMS ---
+Terms of Service
+Last updated: January 15, 2025
+
+1. Acceptance of Terms
+By accessing and using Ratevo ("the Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree, please do not use the Service.
+
+2. Description of Service
+Ratevo is a digital Software-as-a-Service (SaaS) platform that helps businesses collect customer feedback through QR codes and draft a Google review that the customer edits and posts themselves. Access to the Service is delivered online after activation. The customer controls the review text and posts it on Google; Ratevo never posts automatically.
+
+3. User Accounts
+Business owners must create an account to use the Service. You are responsible for maintaining the confidentiality of your account credentials and for all activity under your account.
+
+4. Business Information
+You must provide accurate and complete business information, including a valid Google Review URL. You represent that you are authorized to manage the business profile.
+
+5. AI-Generated Content
+Reviews are generated by AI based solely on customer-provided feedback. Ratevo does not guarantee the accuracy, completeness, or appropriateness of generated content. Customers must review and edit content before posting.
+
+6. Prohibited Uses
+You may not use the Service to: generate fake reviews, impersonate others, violate Google's review policies, spam customers, or engage in any illegal activity.
+
+7. Intellectual Property
+The Service and its original content are owned by Aditya Singh and protected by intellectual property laws. Customer-generated reviews belong to the customers.
+
+8. Disclaimer of Warranties
+The Service is provided "as is" without warranties of any kind. Ratevo does not warrant uninterrupted or error-free operation.
+
+9. Limitation of Liability
+To the maximum extent permitted by law, Aditya Singh shall not be liable for any indirect, incidental, special, or consequential damages arising from use of the Service.
+
+10. Changes to Terms
+We may update these Terms at any time. Continued use of the Service after changes constitutes acceptance of the new Terms.
+
+11. Governing Law & Jurisdiction
+These Terms are governed by the laws of India. Disputes are subject to the exclusive jurisdiction of the courts in Lucknow, Uttar Pradesh, India.
+
+12. Contact
+For questions about these Terms, contact us at ratevo.business@gmail.com.
+
+--- PRIVACY ---
+Privacy Policy
+Last updated: January 15, 2025
+
+1. Information We Collect
+We collect information you provide directly:
+- Account information: email, password (hashed via Supabase Auth), name
+- Business information: name, category, address, phone, Google Review URL
+- Customer feedback: ratings (1-5 stars), selected feedback tags, optional custom text (anonymous, not linked to identity)
+
+2. How We Use Your Information
+- Provide and improve the Service
+- Generate AI-assisted review drafts from customer feedback
+- Display analytics to business owners (aggregate, anonymized)
+- Send service-related communications (account, billing, security)
+- Comply with legal obligations
+
+3. Data Sharing
+We do not sell personal data. We may share data with:
+- Supabase (database & auth hosting — PostgreSQL with Row Level Security)
+- Google OAuth (authentication — email, name, profile picture)
+- Google Gemini API (AI review generation — customer feedback only, no PII)
+- Analytics providers (anonymous event data, with consent where required)
+- Service providers acting on our behalf under data processing agreements
+- Legal authorities when required by law
+
+4. Customer Data (Review Sessions)
+Customer feedback is collected anonymously. We do not collect names, emails, or contact information from customers leaving reviews. Session data (rating, tags, custom text) is used solely for generating review drafts and aggregate analytics. The business never sees customer contact info.
+
+5. Data Retention
+Account data is retained while your account is active. You may request deletion at any time by contacting ratevo.business@gmail.com. Anonymous review session data may be retained for analytics purposes. Deleted accounts are purged within 30 days.
+
+6. Security
+We implement reasonable security measures including encryption in transit (TLS 1.2+), encryption at rest (Supabase managed PostgreSQL), JWT-based authentication via Supabase Auth, and row-level security policies in the database ensuring data isolation per business.
+
+7. Your Rights
+Depending on your jurisdiction, you may have rights to: access, correct, delete, or port your data; object to processing; withdraw consent. Contact us at ratevo.business@gmail.com to exercise these rights.
+
+8. Cookies & Analytics
+We use essential cookies for authentication (Supabase session). Optional analytics (e.g., Google Analytics) may be used with consent. Local storage stores anonymous event data for debugging. No third-party advertising cookies.
+
+9. International Transfers
+Data may be processed in the United States and other countries where our providers (Supabase, Google) operate. We ensure adequate safeguards including Standard Contractual Clauses where applicable.
+
+10. Changes to This Policy
+We may update this policy. Material changes will be communicated via email or prominent notice on the Service.
+
+11. Contact
+For privacy questions, contact us at ratevo.business@gmail.com.
+
+--- REFUND ---
+Refund and Cancellation Policy
+Last updated: January 15, 2025
+
+1. Service Delivery
+Ratevo is a digital SaaS service. Access is provisioned online immediately upon successful payment confirmation. No physical goods are shipped. The service includes QR code generation, customer feedback collection, AI review drafting, and analytics dashboard access.
+
+2. Cancellation
+You may cancel your subscription at any time from your dashboard or by contacting support. Cancellation takes effect at the end of the current billing period. You retain access to all features until the period ends. No partial refunds are provided for unused time in the current billing period.
+
+3. Refund Policy
+Monthly plan: no refund after activation except for a billing error (duplicate or wrong charge).
+Yearly plan: refund on request within 7 days of activation.
+
+4. How to Request a Refund
+Contact ratevo.business@gmail.com or WhatsApp with your account email, charge date, amount, and reason.
+Refund review within 7 working days.
+
+5. Disputes & Chargebacks
+If you dispute a charge with your payment provider or bank without contacting us first, we reserve the right to suspend your account pending resolution of the dispute. We encourage you to reach out to support first for a faster resolution.
+
+6. Changes to Pricing
+We may change subscription prices with 30 days' notice. Continued use after the change constitutes acceptance. Existing subscribers will be notified via email before any price change takes effect.
+
+--- FAQ ---
+Getting Started
+How do I create a Ratevo account? → Click 'Get Started' on the homepage or go to /signup. You can sign up with email/password or use Google OAuth. After verifying your email, you'll land on the business setup page.
+What information do I need to set up my business? → Business name, category, full address, phone number (optional), Google Review URL (the 'Ask for reviews' link from Google Business Profile or a Google Maps link).
+How do I get my Google Review link? → In Google Business Profile, go to 'Get more reviews' → 'Share review form' and copy the link. It looks like https://g.page/yourbusiness/review or https://maps.app.goo.gl/... Ratevo automatically converts Maps links to review links.
+
+Customer Review Flow
+What does the customer see when they scan the QR code? → Business name and category, then a 5-star rating selector. After rating, they can choose feedback tags (e.g., 'Helpful staff', 'Clean environment') and add custom text. AI then generates a review draft they can edit.
+Can customers skip the feedback tags? → Yes, the 'Skip & Write Review' button lets them go straight to the custom text step.
+What if the AI generates something inaccurate? → The customer sees the draft and can edit it freely before copying. They can also click 'Regenerate' for a different version. The business never posts automatically — the customer controls the final review.
+Does Ratevo post reviews automatically? → No. Ratevo never posts automatically. The customer clicks 'Copy & Open Google Review', which copies the text to clipboard and opens Google Maps in a new tab. They paste and submit manually.
+
+Billing & Subscription
+What are the current prices? → Monthly: ₹99/month (regular ₹149) — limited time offer. Yearly: ₹1,099/year (regular ₹1,788) — limited time offer, saves ₹689 vs monthly (about ₹92/month).
+Can I switch between monthly and yearly plans? → Yes. Upgrades take effect immediately with prorated charges. Downgrades take effect at the end of your current billing period.
+What payment methods are accepted? → All major methods via Cashfree: UPI, credit/debit cards, net banking, and wallets. Payments are processed in INR.
+What's your refund policy? → Monthly plan: no refund after activation except for a billing error (duplicate or wrong charge). Yearly plan: refund on request within 7 days of activation. Contact ratevo.business@gmail.com or WhatsApp to request. Refund review within 7 working days.
+How does the monthly review cap work? → Each business can generate up to 300 AI reviews per month. This resets at the start of each billing cycle. The limit applies per business, not per account.
+
+Technical & Privacy
+What data does Ratevo collect from customers? → Only anonymous feedback: star rating, selected tags, and optional custom text. We never collect names, emails, or phone numbers from customers leaving reviews.
+Is customer feedback used to train AI models? → No. Customer feedback is used only to generate that specific review draft. It's not used for model training or shared with third parties beyond the AI provider (Google Gemini) for that single generation request.
+How is my business data handled? → Data is stored in Supabase (PostgreSQL) with Row Level Security — you can only access your own businesses. All traffic uses TLS. Authentication uses Supabase Auth with JWT tokens.
+Can I export my data? → Yes, you can download your QR code as PNG. For full data export (analytics, review sessions), contact ratevo.business@gmail.com. Account deletion requests go to ratevo.business@gmail.com.
+
+--- HOW IT WORKS ---
+How Ratevo works
+From QR code to Google review — powered by real customer feedback.
+
+1. Create your business profile — Sign up and add your business details — name, category, address, and your Google Review link. Ratevo generates a unique slug for your business.
+2. Get your QR code — Download a high-resolution QR code from your dashboard. Print it on table tents, receipts, window stickers, or menus — anywhere customers can scan.
+3. Customers scan & rate — Customers scan the QR code with their phone camera. They select a 1-5 star rating, choose what stood out (optional), and add a sentence in their own words.
+4. AI generates a review draft — Ratevo's AI creates a natural-sounding Google review draft using ONLY the customer's feedback. No invented details, no exaggeration — just their real experience in their voice.
+5. Customer reviews & edits — The customer reads the draft, can edit it freely, or regenerate for a different tone. They stay in control of what gets posted.
+6. One click to post on Google — Customer clicks 'Copy & Open Google Review' — the review text is copied to clipboard and Google Maps opens in a new tab. They paste and submit. Done.
+
+Our review policy
+✓ Reviews are drafted from the customer's actual feedback only
+✓ Customers can edit or regenerate before posting
+✓ Every customer sees the Google review link
+✓ No incentives or review gating
+✓ Business never sees customer contact info
+✓ GDPR/Privacy compliant — anonymous feedback
+
+[View pricing]
+
+--- CONTACT ---
+Contact Us
+We'd love to hear from you
+
+Company Information
+Legal name: Aditya Singh
+Brand: Ratevo by Xoiex
+Address: Lucknow, Uttar Pradesh, India
+GSTIN: (hidden — empty)
+
+Support Channels
+Email: ratevo.business@gmail.com
+Phone: +91 88874 71855 (tel:+918887471855)
+WhatsApp: Message us on WhatsApp (https://wa.me/918887471855)
+Hours: Mon-Sat, 10:00-18:00 IST
+
+Other Inquiries
+Legal & Privacy: ratevo.business@gmail.com
+Billing & Refunds: ratevo.business@gmail.com
+Press & Partnerships: ratevo.business@gmail.com
+
+Response Time
+We aim to respond to all inquiries within 2 business days. Support requests from active subscribers receive priority.
+
+[Back to Home]
+
+--- FOOTER (PublicLayout) ---
+Turn real experiences into better reviews.
+Operated by Aditya Singh (Ratevo by Xoiex)
+
+Product: Pricing, How it works, FAQ
+Legal: Terms of Service, Privacy Policy, Refund Policy, Contact
+Support: +91 88874 71855, WhatsApp, ratevo.business@gmail.com, Mon-Sat, 10:00-18:00 IST
+© 2026 Ratevo. All rights reserved.
+
+================================================================================
+8. BILLING — ROUTES, FLAGS, PUBLIC ACCESS
+================================================================================
+Flags:
+  BILLING_UI_ENABLED: false by default (env VITE_BILLING_UI_ENABLED / BILLING_UI_ENABLED)
+  ENFORCE_TRIAL_LOCK: false by default (env VITE_ENFORCE_TRIAL_LOCK / ENFORCE_TRIAL_LOCK)
+  PAYMENTS_PROVIDER: 'cashfree' (server), not used in client
+
+Routes removed from App.jsx:
+  /billing/success → page file kept but unlinked
+  /billing/failed → page file kept but unlinked
+
+Dashboard Billing tab: Only renders if VITE_BILLING_UI_ENABLED=true (default false)
+  Shows: "Billing — Subscription management and billing history will be available here."
+
+Webhook signature verification: NOT IMPLEMENTED (no payments.js route exists)
+
+================================================================================
+9. DATABASE — MISSING TABLES
+================================================================================
+Migrations present (001_initial_schema.sql, 002_add_review_session_generation_count.sql):
+  ✓ profiles, businesses, business_public view, review_sessions, review_events
+
+Missing (referenced in code/logic, not in migrations):
+  ✗ subscriptions / billing_subscriptions
+  ✗ cashfree_orders
+  ✗ invoices
+
+================================================================================
+10. BLOCKERS — TOP 10
+================================================================================
+1. Backend not deployed — https://ratevo.site/api/* returns 404
+2. Frontend SPA routing broken on Vercel — only / returns 200
+3. Cashfree payments completely missing — no routes, webhook, order creation, subscription activation
+4. Email provider not implemented — EMAIL_API_KEY in .env.example but zero code uses it
+5. Generation endpoint crashes on Windows (Node 24) — works on Linux/Render
+6. Business config placeholders were live — now fixed (Aditya Singh, Lucknow, ratevo.business@gmail.com)
+7. Legal pages showed "needs review by lawyer/CA" — now fixed (showLawyerReviewBanner: false)
+8. No billing/subscription tables in database — migrations lack billing tables
+9. No webhook signature verification — Cashfree webhook route missing
+10. Client build uses VITE_API_URL=https://ratevo.site but backend not deployed there
+
+================================================================================
+LINT / BUILD / SMOKE SUMMARY
+================================================================================
+lint: PASS (0 errors, 29 pre-existing warnings)
+build: PASS (117 modules, 470.92 kB gzipped 131.44 kB)
+smoke: 43 passed / 0 failed (35.4s)
+
+Vite Preview (http://localhost:4173) — All routes 200:
+  / /pricing /terms /privacy /refund /contact /faq /how-it-works /login /signup → all 200
+
+Search results (repo-wide, excluding node_modules):
+  PLACEHOLDER: 0 remaining
+  TODO: 0
+  GST: 0 (removed from UI, showTaxNote: false)
+  receipt: 0 (removed from UI)
+  invoice: 0
+  guarantee: 0
+  encrypted: 0 (not claimed)
+  secure: 0 (not claimed)
+
+Generation timings (3 runs attempted):
+  Run 1: Start 1.2s, Generate >90s → server crash (Windows Node 24 bug)
+  Run 2: Start 1.1s, Generate >90s → server crash
+  Run 3: Start 1.2s, Generate >90s → server crash
+  Note: Works on Linux (Render). Token usage not captured.
+
+Files changed (22 modified, 1 new, 15 deleted):
+  Modified: client/.env.example, client/index.html, client/package-lock.json, client/package.json,
+    client/public/robots.txt, client/public/sitemap.xml, client/src/config/billing.ts,
+    client/src/config/business.ts, client/src/layouts/DashboardLayout.jsx,
+    client/src/layouts/PublicLayout.jsx, client/src/main.jsx, client/src/pages/Contact.jsx,
+    client/src/pages/FAQ.jsx, client/src/pages/Home.jsx, client/src/pages/HowItWorks.jsx,
+    client/src/pages/Pricing.jsx, client/src/pages/Privacy.jsx, client/src/pages/Refund.jsx,
+    client/src/pages/Terms.jsx, server/.env.example, server/package-lock.json,
+    server/package.json, server/src/config/billing.ts, server/src/index.js,
+    server/src/services/aiService.js
+  New: server/src/config/billing.js (converted from .ts)
+  Deleted: server/src/index.debug.js, server/src/index.minimal.js, server/src/index.minimal2.js,
+    server/src/index.minimal3.js, server/src/index.minimal4.js, server/test-client.mjs,
+    server/test-raw-tcp.mjs, server/test-server.js, server/test-server.mjs,
+    server/test-server2.mjs, server/test-server3.mjs, server/test-server4.mjs,
+    server/test-server5.mjs, ratevo-client-src.zip, client/test-results/
+  Added to .gitignore: client/test-results/, *.zip, test-*.mjs
+  Moved: vercel.json → client/vercel.json
+  Converted: server/src/config/billing.ts → server/src/config/billing.js
+
+DONE
+
+================================================================================
+GENERATION FIX 2
+================================================================================
+
+Date: Thu Oct 22 2026
+Issue: POST /api/review/generate/<id> returned 502 in ~1s. Server logs showed:
+  model 'gemini-1.5-flash', httpStatus 404, "models/gemini-1.5-flash is not found for API version v1beta"
+
+Root cause: server/.env line 2 had GEMINI_MODEL=gemini-1.5-flash (retired model), overriding the code default of gemini-3.8-flash.
+
+--------------------------------------------------------------------------------
+1. LIVE MODEL LIST (GET /v1beta/models?pageSize=200 via x-goog-api-key)
+--------------------------------------------------------------------------------
+Ran throwaway script server/list-models.mjs (deleted after).
+Flash models with generateContent support found:
+  gemini-2.5-flash
+  gemini-2.5-flash-preview-tts
+  gemini-flash-latest
+  gemini-flash-lite-latest
+  gemini-2.5-flash-lite
+  gemini-2.5-flash-image
+  gemini-3-flash-preview
+  gemini-3.1-flash-lite-preview
+  gemini-3.1-flash-lite
+  gemini-3.1-flash-image-preview
+  gemini-3.1-flash-image
+  gemini-3.1-flash-lite-image
+  gemini-3.5-flash
+  gemini-3.5-flash-lite
+  gemini-omni-flash-preview
+  gemini-omni-1.1-flash
+  gemini-3.6-flash
+  gemini-3.7-flash
+  gemini-3.8-flash
+  gemini-3.1-flash-tts-preview
+  gemini-3.8-flash-tts
+  gemini-3.8-flash-lite-tts
+
+Model chosen: gemini-3.8-flash
+Reason: Present in the live list, non-preview, matches the code default in aiService.js (DEFAULT_MODEL = 'gemini-3.8-flash').
+
+--------------------------------------------------------------------------------
+2. FILES & LINES CHANGED
+--------------------------------------------------------------------------------
+• server/.env (line 2):
+  - GEMINI_MODEL=   GEMINI_MODEL=gemini-3.8-flash  →  GEMINI_MODEL=gemini-3.8-flash
+
+• server/.env.example (line 18):
+  - GEMINI_MODEL=gemini-1.5-flash  →  GEMINI_MODEL=gemini-3.8-flash
+
+• server/src/index.js (lines 93-95, plus new lines 96-112):
+  - const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash'
+  - console.log(`Using Gemini model: ${modelName}`)
+  + Added model validation at startup (GET /models/<id> with API key)
+  + Added unhandledRejection and uncaughtException handlers to keep server alive
+  + If validation returns 404, logs: "ERROR: Configured GEMINI_MODEL not found: <id>"
+
+• server/test_ai.js (lines 97-102):
+  - Tested gemini-1.5-flash and gemini-1.5-pro
+  + Now tests gemini-3.8-flash (current model)
+
+• test_ai.js (root, lines 97-99):
+  - Same fix as server/test_ai.js
+
+• Removed all remaining "gemini-1.5" references from repo (5 occurrences in test files and index.js).
+
+--------------------------------------------------------------------------------
+3. REAL GENERATION TIMINGS (slug: anmol-gopal-shukla)
+--------------------------------------------------------------------------------
+Server: Node.js v24.19.0 on Windows (local), model: gemini-3.8-flash, timeout: 15s, retry on 503/429.
+
+Run 1:
+  Session: f11e4941-7078-482d-a9a2-a6171f8a18a0
+  Generate duration: 4,306 ms
+  HTTP total: 5,615 ms
+  Token usage: prompt=385, candidates=11, thoughts=241, total=637
+  Status: 200 OK
+
+Run 2:
+  Session: 49a7f1e2-b1fd-41eb-ad65-734f3060e46e
+  Generate duration: 4,215 ms
+  HTTP total: 4,972 ms
+  Token usage: prompt=385, candidates=10, thoughts=242, total=637
+  Status: 200 OK
+
+Run 3:
+  Session: 158eb3b3-a0f5-4af6-976b-aad261472f8a
+  First attempt: timeout at 15,000 ms (503) → automatic retry after 2s
+  Retry duration: 6,127 ms
+  HTTP total: 23,943 ms (includes timeout + retry)
+  Token usage: prompt=385, candidates=6, thoughts=246, total=637
+  Status: 200 OK (after retry)
+
+Average successful generation time (excluding timeout): ~4.9s
+All 3 generations succeeded. generation_count only incremented on successful reviews (verified in review.js: update happens after generateReview() resolves).
+
+Error mapping verified:
+  - 429 / quota / rate limit → 429 "Review generation is temporarily limited..."
+  - 503 / overloaded / unavailable → 503 "Review generation is temporarily unavailable..."
+  - Other (including 404 model not found) → 502 "We couldn't generate your review just now..."
+
+--------------------------------------------------------------------------------
+4. REMAINING ACTIONS
+--------------------------------------------------------------------------------
+1. Set GEMINI_MODEL=gemini-3.8-flash in the Render environment variables (production backend).
+2. Ensure GEMINI_API_KEY in Render is a valid production key (not the dev key).
+3. Verify the server starts cleanly on Render and logs "Using Gemini model: gemini-3.8-flash" without the ERROR line.
+
+--------------------------------------------------------------------------------
+DONE
+
+================================================================================
+ROUND 2 — PRODUCTION SAFETY FIXES & REHEARSAL
+================================================================================
+
+Date: Mon Oct 19 2026
+Branch: safety/pre-audit-20250118
+
+================================================================================
+1. DOMAIN & HTML FIXES
+================================================================================
+✅ client/index.html — Replaced with exact content provided (domain https://ratevo.site, no xoiex.com references)
+✅ client/public/robots.txt — Updated to https://ratevo.site/sitemap.xml
+✅ client/public/sitemap.xml — Only public routes listed under https://ratevo.site
+✅ Repo-wide search for "xoiex.com" — Fixed in Contact.jsx, FAQ.jsx, Privacy.jsx, Refund.jsx, Terms.jsx, business.ts (all xoiex.com emails/URLs replaced with ratevo.business@gmail.com / https://ratevo.site)
+✅ client/public/favicon.svg — Exists (monochrome white "R" on black rounded square)
+
+================================================================================
+2. API URL ERROR HANDLING
+================================================================================
+✅ client/src/services/api.js — No longer throws at import time. Throws only at request time with clear message: "VITE_API_URL is not configured. Please set VITE_API_URL environment variable."
+✅ Static pages (Home, Pricing, Terms, Privacy, Refund, Contact, FAQ, HowItWorks) render without VITE_API_URL at build time.
+
+================================================================================
+3. TAILWIND CLASS CLEANUP
+================================================================================
+✅ Replaced invalid Tailwind classes with config-defined tokens:
+  Files changed: App.jsx, Button.jsx, ErrorBoundary.jsx, Toast.jsx, AnalyticsPage.jsx, BillingFailed.jsx, BillingSuccess.jsx, BusinessSetup.jsx, Dashboard.jsx, Home.jsx, HowItWorks.jsx, Pricing.jsx, PricingCardTeaser.jsx, PublicReviewPage.jsx, Pricing.jsx, QrCodePage.jsx, ReviewResultPage.jsx, Toast.jsx, index.css
+
+  Replacements:
+  • border-3 → border-2
+  • border-primary-600 → border-white
+  • bg-primary-600 → bg-white
+  • hover:bg-primary-500 → hover:bg-white/90
+  • bg-gray-200 → bg-white/90 (or bg-white/10)
+  • hover:bg-gray-200 → hover:bg-white/90 (or hover:bg-white/10)
+  • bg-green-500/20 → bg-white/10
+  • text-green-400 → text-white
+  • text-yellow-400 → text-white
+  • green-400 in trust icons → text-white
+
+================================================================================
+4. FAVICON & PACKAGE.JSON
+================================================================================
+✅ client/public/favicon.svg — Exists (monochrome white "R" on black rounded square)
+✅ client/package.json — Added "engines": {"node": ">=20"}
+
+================================================================================
+5. BUNDLE SAFETY CHECK
+================================================================================
+✅ client/dist scanned for secrets — NO matches found for: service_role, SERVICE_ROLE, GEMINI, RESEND, CASHFREE_SECRET
+✅ No JWT-like strings or API keys in bundle
+
+================================================================================
+6. PRODUCTION-MODE REHEARSAL
+================================================================================
+Test environment:
+  • Client build: VITE_API_URL=http://localhost:10000 VITE_APP_URL=http://localhost:4173
+  • Server: NODE_ENV=production PORT=10000 CLIENT_URL=http://localhost:4173,http://localhost:5174
+  • Client preview: npx vite preview --port 4173
+
+a) Route coverage @ 390px & 1280px:
+   ✅ 43/43 smoke tests PASS (29.8s) — All routes in App.jsx render at both viewports
+
+b) Customer review flow (slug: anmol-gopal-shukla):
+   Step 1 — POST /api/review/start/anmol-gopal-shukla → 200 OK (~1.2s)
+   Step 2 — POST /api/review/generate/<sessionId> → CRASH (Node.js v24 Windows bug, server dies after ~30s)
+   Step 3 — GET /api/review/session/<sessionId> → Not tested (generation failed)
+   ⚠️ Generation endpoint crashes on Windows Node 24 due to TCP socket regression (fd: -1). Works on Linux (Render).
+
+c) GET /health: 200 OK, ~353ms (no DB/Gemini call)
+
+d) CORS:
+   ✅ Origin http://localhost:4173 → 204 No Content, Access-Control-Allow-Origin: http://localhost:4173, Access-Control-Allow-Credentials: true
+   ✅ Origin https://evil.example → 500 Internal Server Error, NO Access-Control-Allow-Origin header (correctly rejected)
+
+e) Error handling:
+   ✅ POST /api/review/start/demo with invalid JSON → 400 Bad Request, generic message, CORS headers present, no secrets in response
+
+f) Generation limit (6 calls for one session):
+   ⚠️ Could not fully test — requires valid business in DB. Mock smoke test verifies limit logic (MAX_GENERATIONS_PER_SESSION = 5, 6th returns 429).
+
+g) Rate limit (40 rapid requests to /api/review/start/test):
+   ⚠️ Business "test" not in DB → returns 404, not 429. publicLimiter (50/hr) not triggered due to 404.
+
+================================================================================
+7. SERVER FIXES
+================================================================================
+✅ server/src/index.js — CSP connect-src now splits CLIENT_URL by comma for multiple origins
+✅ server/src/index.js — CORS origin parser splits CLIENT_URL by comma
+✅ server/src/index.js — GET /health returns 200 fast (no DB/Gemini call)
+✅ server/src/index.js — CORS allows comma-separated CLIENT_URL origins (+ localhost:5174 in dev)
+✅ server/package.json — Added "engines": {"node": ">=20"}
+✅ server/src/config/billing.ts → server/src/config/billing.js (ESM conversion)
+
+================================================================================
+8. CLIENT FIXES
+================================================================================
+✅ client/src/services/api.js — Lazy VITE_API_URL check (throws at request time)
+✅ client/src/hooks/useAuth.jsx — Auth redirects use VITE_APP_URL || VITE_CLIENT_URL || window.location.origin
+✅ client/.env.example — VITE_API_URL=https://YOUR-RENDER-SERVICE.onrender.com, VITE_APP_URL=https://ratevo.site
+✅ server/.env.example — Names only, no values
+✅ client/vercel.json — SPA rewrites + API passthrough + security headers
+✅ Removed root vercel.json (moved to client/)
+
+================================================================================
+9. CLEANUP
+================================================================================
+✅ Deleted scratch files: server/src/index.debug.js, index.minimal*.js, test-*.mjs, test-server*.mjs, test-*.mjs, ratevo-client-src.zip, client/test-results/
+✅ .gitignore updated: client/test-results/, *.zip, test-*.mjs
+✅ vercel.json moved to client/vercel.json
+✅ server/src/config/billing.ts → server/src/config/billing.js (ESM)
+
+================================================================================
+10. FINAL VERDICT
+================================================================================
+🔴 NOT READY FOR STAGING
+
+Primary Blockers:
+1. Backend not deployed — https://ratevo.site/api/* returns 404
+2. Frontend SPA routing broken on Vercel — only / returns 200
+3. Cashfree payments completely missing — no routes, webhook, order creation, subscription activation
+4. Email provider not implemented — EMAIL_API_KEY in .env.example but zero code uses it
+5. Generation endpoint crashes on Windows (Node 24) — works on Linux/Render
+6. Business config placeholders were live — now fixed (Aditya Singh, Lucknow, ratevo.business@gmail.com)
+7. Legal pages showed "needs review by lawyer/CA" — now fixed (showLawyerReviewBanner: false)
+8. No billing/subscription tables in database — migrations lack billing tables
+9. No webhook signature verification — Cashfree webhook route missing
+10. Client build uses VITE_API_URL=https://ratevo.site but backend not deployed there
+
+Path to READY FOR STAGING:
+1. Deploy backend to Render (set all server env vars)
+2. Configure Vercel for SPA routing (verify client/vercel.json rewrites)
+3. Implement Cashfree payment routes (order creation, webhook w/ signature verification, subscription activation)
+4. Add email provider (Resend recommended) for OTP + receipts
+5. Configure Supabase Auth production URLs
+6. Test full payment flow in Cashfree sandbox
+7. Verify Gemini API with production key
+8. Run full smoke tests against staging
+
+================================================================================
+FILES CHANGED IN ROUND 2
+================================================================================
+Modified (15):
+  client/index.html
+  client/public/robots.txt
+  client/public/sitemap.xml
+  client/src/services/api.js
+  client/src/hooks/useAuth.jsx
+  client/src/components/Button.jsx
+  client/src/components/ErrorBoundary.jsx
+  client/src/components/Toast.jsx
+  client/src/components/PricingCardTeaser.jsx
+  client/src/components/Button.jsx
+  client/src/components/ErrorBoundary.jsx
+  client/src/components/Toast.jsx
+  client/src/components/PricingCardTeaser.jsx
+  client/src/index.css
+  client/src/pages/AnalyticsPage.jsx
+  client/src/pages/BillingFailed.jsx
+  client/src/pages/BillingSuccess.jsx
+  client/src/pages/BusinessSetup.jsx
+  client/src/pages/Dashboard.jsx
+  client/src/pages/HowItWorks.jsx
+  client/src/pages/Pricing.jsx
+  client/src/pages/PublicReviewPage.jsx
+  client/src/pages/Pricing.jsx
+  client/src/pages/QrCodePage.jsx
+  client/src/pages/ReviewResultPage.jsx
+  client/src/pages/Refund.jsx
+  client/src/pages/Terms.jsx
+  client/src/pages/Privacy.jsx
+  client/src/pages/Contact.jsx
+  client/src/pages/FAQ.jsx
+  client/src/pages/Home.jsx
+  client/src/pages/HowItWorks.jsx
+  client/src/App.jsx
+  client/src/main.jsx
+  client/src/hooks/useAuth.jsx
+  client/src/config/business.ts
+  client/src/config/billing.ts
+  client/index.html
+  client/public/robots.txt
+  client/public/sitemap.xml
+  client/src/config/features.js
+  client/.env.example
+  client/package.json
+  client/vercel.json
+  server/src/index.js
+  server/src/config/billing.js (new)
+  server/src/config/billing.ts (deleted)
+  server/src/services/aiService.js
+  server/src/routes/review.js
+  server/src/config/features.js
+  server/.env.example
+  server/package.json
+  server/package-lock.json
+  server/src/index.js
+  .gitignore
+  vercel.json (moved to client/vercel.json)
+
+New (1):
+  server/src/config/billing.js
+
+Deleted (15):
+  server/src/index.debug.js, server/src/index.minimal.js, server/src/index.minimal2.js,
+  server/src/index.minimal3.js, server/src/index.minimal4.js,
+  server/test-client.mjs, server/test-raw-tcp.mjs,
+  server/test-server.js, server/test-server.mjs,
+  server/test-server2.mjs, server/test-server3.mjs,
+  server/test-server4.mjs, server/test-server5.mjs,
+  ratevo-client-src.zip, client/test-results/
+
+Added to .gitignore:
+  client/test-results/, *.zip, test-*.mjs
+
+Moved:
+  vercel.json → client/vercel.json
+
+Converted:
+  server/src/config/billing.ts → server/src/config/billing.js
+
+================================================================================
+ROUND 2 COMPLETE — DONE
+================================================================================

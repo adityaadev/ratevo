@@ -21,15 +21,15 @@ export function PricingCardTeaser({ plan }) {
         <h3 className="text-lg font-semibold text-white">{plan.name}</h3>
         <div className="mt-3 flex items-baseline justify-center gap-1">
           <span className="text-3xl font-bold text-white mono">{formatAmount(plan.amountPaise)}</span>
-          <span className="text-[var(--text-muted)] self-end pb-1">/month</span>
+          <span className="text-[var(--text-muted)] self-end pb-1">{isYearly ? '/year' : '/month'}</span>
         </div>
         {plan.regularPriceDisplay && (
           <p className="mt-1 text-sm text-[var(--text-subtle)] line-through">
-            Regular: {formatAmount(parseInt(plan.regularPriceDisplay) * 100)}/month
+            Regular: {formatAmount(parseInt(plan.regularPriceDisplay) * 100)}{isYearly ? '/year' : '/month'}
           </p>
         )}
         {isYearly && (
-          <p className="mt-1 text-sm text-green-400">
+          <p className="mt-1 text-sm text-white">
             Billed yearly: {formatAmount(plan.amountPaise)}
           </p>
         )}

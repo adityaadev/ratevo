@@ -122,7 +122,7 @@ export default function DashboardLayout() {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-4 border-b border-[var(--border)]">
             <Link to="/dashboard" className="flex items-center gap-2" aria-label="Ratevo Dashboard">
-              <Logo size="md" showTagline />
+              <Logo size="md" showTagline standalone />
             </Link>
             <button
               className="lg:hidden p-2 rounded-xl text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-colors duration-fast"

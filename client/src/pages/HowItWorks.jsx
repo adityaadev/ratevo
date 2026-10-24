@@ -58,7 +58,7 @@ export default function HowItWorks() {
             How Ratevo works
           </h1>
           <p className="mt-4 text-lg text-[var(--text-muted)]">
-            From QR code to Google review in under 60 seconds — powered by real customer feedback.
+            From QR code to Google review — powered by real customer feedback.
           </p>
         </div>
 
@@ -74,7 +74,7 @@ export default function HowItWorks() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {trustPoints.map((point, index) => (
                 <div key={index} className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <svg className="w-5 h-5 text-white flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   <span className="text-[var(--text-muted)]">{point}</span>
@@ -86,7 +86,7 @@ export default function HowItWorks() {
 
         <div className="mt-12 text-center">
           <Button variant="primary" size="lg" asChild>
-            <Link to="/pricing">Start free trial</Link>
+            <Link to="/pricing">View pricing</Link>
           </Button>
         </div>
       </div>

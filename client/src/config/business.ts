@@ -1,13 +1,24 @@
 export const BUSINESS_CONFIG = {
-  legalName: "Xoiex Technologies Private Limited",
   brandName: "Ratevo",
-  address: "123 Tech Park, Bangalore, Karnataka 560001, India",
-  supportEmail: "support@xoiex.com",
-  supportPhone: "+91-80-1234-5678",
-  whatsappNumber: "+91-98765-43210",
-  gstin: "29AAACX1234A1Z5",
-  jurisdiction: "Bangalore, India",
-  website: "https://ratevo.xoiex.com",
-  showLawyerReviewBanner: true,
+  tagline: "by Xoiex",
+  legalName: "Aditya Singh",
+  address: "Lucknow, Uttar Pradesh, India",
+  supportEmail: "ratevo.business@gmail.com",
+  supportPhone: "8887471855",
+  whatsappNumber: "918887471855",
+  whatsappUrl: "https://wa.me/918887471855",
+  gstin: "",
+  supportHours: "Mon-Sat, 10:00-18:00 IST",
+  jurisdiction: "Lucknow, Uttar Pradesh, India",
+  website: "https://ratevo.site",
+  showLawyerReviewBanner: false,
   lastLegalReviewDate: "2025-01-15",
 };
+
+export function getWhatsAppUrl(prefilledText?: string): string {
+  const base = BUSINESS_CONFIG.whatsappUrl;
+  if (prefilledText) {
+    return `${base}?text=${encodeURIComponent(prefilledText)}`;
+  }
+  return base;
+}

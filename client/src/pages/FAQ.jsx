@@ -45,12 +45,8 @@ export default function FAQ() {
       category: "Billing & Subscription",
       questions: [
         {
-          q: "Is there a free trial?",
-          a: "Yes, every new account gets a 7-day free trial with full access. No credit card required to start. After the trial, you choose a plan to continue."
-        },
-        {
-          q: "What happens when my trial ends?",
-          a: "If you don't upgrade, your account enters a 5-day grace period. Customers can still leave reviews, but you can't generate new AI reviews. After grace, the account expires and you'll need to subscribe to reactivate."
+          q: "What are the current prices?",
+          a: "Monthly: ₹99/month (regular ₹149) — limited time offer. Yearly: ₹1,099/year (regular ₹1,788) — limited time offer, saves ₹689 vs monthly (about ₹92/month)."
         },
         {
           q: "Can I switch between monthly and yearly plans?",
@@ -58,11 +54,15 @@ export default function FAQ() {
         },
         {
           q: "What payment methods are accepted?",
-          a: "All major methods via Cashfree: UPI, credit/debit cards, net banking, and wallets. Payments are processed securely in INR."
+          a: "All major payment methods: UPI, credit/debit cards, net banking, and wallets. Payments are processed in INR."
         },
         {
-          q: "Are prices inclusive of GST?",
-          a: "Yes, all prices shown include 18% GST. You receive a GST-compliant receipt for each payment."
+          q: "What's your refund policy?",
+          a: "Monthly plan: no refund after activation except for a billing error (duplicate or wrong charge). Yearly plan: refund on request within 7 days of activation. Contact ratevo.business@gmail.com or WhatsApp to request. Refund review within 7 working days."
+        },
+        {
+          q: "How does the monthly review cap work?",
+          a: "Each business can generate up to 300 AI reviews per month. This resets at the start of each billing cycle. The limit applies per business, not per account."
         },
       ]
     },
@@ -75,15 +75,15 @@ export default function FAQ() {
         },
         {
           q: "Is customer feedback used to train AI models?",
-          a: "No. Customer feedback is used only to generate that specific review draft. It's not used for model training or shared with third parties beyond the AI provider (Google Gemini) for that single generation request."
+          a: "No, customer feedback is not used for AI model training. It's only used to generate that specific review draft and is not shared with third parties beyond the AI provider (Google Gemini) for that single generation request."
         },
         {
-          q: "How is my business data secured?",
+          q: "How is my business data handled?",
           a: "Data is stored in Supabase (PostgreSQL) with Row Level Security — you can only access your own businesses. All traffic uses TLS. Authentication uses Supabase Auth with JWT tokens."
         },
         {
           q: "Can I export my data?",
-          a: "Yes, you can download your QR code as PNG. For full data export (analytics, review sessions), contact support@xoiex.com. Account deletion requests go to legal@xoiex.com."
+          a: "Yes, you can download your QR code as PNG. For full data export (analytics, review sessions), contact ratevo.business@gmail.com. Account deletion requests go to ratevo.business@gmail.com."
         },
       ]
     },

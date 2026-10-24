@@ -155,7 +155,7 @@ export default function ReviewResultPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg px-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-3 border-white border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
       </div>
     )
   }

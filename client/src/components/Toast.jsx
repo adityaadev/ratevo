@@ -84,7 +84,7 @@ function Toast({ toast, onClose }) {
             'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg',
             toast.type === 'danger'
               ? 'bg-[var(--error)] text-white hover:bg-[var(--error)]/90 focus:ring-[var(--error)]'
-              : 'bg-white text-black hover:bg-gray-200 focus:ring-white'
+              : 'bg-white text-black hover:bg-white/90 focus:ring-white'
           )}
         >
           {toast.action.label}
