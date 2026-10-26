@@ -4,6 +4,12 @@ import { businessApi } from '../services/api'
 import QRCode from 'qrcode.react'
 import { Button } from '../components'
 
+function getQrSize() {
+  if (typeof window === 'undefined') return 200
+  const maxWidth = window.innerWidth - 64 // account for padding
+  return Math.min(200, Math.max(150, maxWidth))
+}
+
 export default function QrCodePage() {
   const { user } = useAuth()
   const [business, setBusiness] = useState(null)
@@ -11,6 +17,14 @@ export default function QrCodePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [copied, setCopied] = useState(false)
+  const [qrSize, setQrSize] = useState(200)
+
+  useEffect(() => {
+    const handleResize = () => setQrSize(getQrSize())
+    setQrSize(getQrSize())
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     loadBusiness()
@@ -88,7 +102,7 @@ export default function QrCodePage() {
           <div className="inline-block p-4 bg-white rounded-xl border border-white/10">
             <QRCode
               value={qrUrl}
-              size={200}
+              size={qrSize}
               level="M"
               includeMargin={true}
               bgColor="#FFFFFF"

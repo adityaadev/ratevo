@@ -66,8 +66,8 @@ export const Input = forwardRef(function Input({
             'disabled:opacity-50 disabled:cursor-not-allowed',
             'placeholder:text-[var(--text-subtle)]',
             floatingLabel
-              ? 'pt-6 pb-2 pl-10 pr-10'
-              : 'py-3 pl-10 pr-10',
+              ? 'pt-5 pb-1.5 pl-10 pr-10 sm:pt-6 sm:pb-2'
+              : 'py-2.5 pl-10 pr-10 sm:py-3',
             icon && !floatingLabel ? 'pl-10' : '',
             iconRight && 'pr-10',
             error && 'border-[var(--error)] focus:ring-[var(--error)]',

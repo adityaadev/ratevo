@@ -119,8 +119,8 @@ export default function DashboardLayout() {
         }`}
         aria-label="Sidebar navigation"
       >
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between h-16 px-4 border-b border-[var(--border)]">
+        <div className="flex flex-col h-full safe-vertical">
+          <div className="flex items-center justify-between h-16 px-4 border-b border-[var(--border)] safe-top">
             <Link to="/dashboard" className="flex items-center gap-2" aria-label="Ratevo Dashboard">
               <Logo size="md" showTagline standalone />
             </Link>
@@ -198,14 +198,14 @@ export default function DashboardLayout() {
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden animate-fade-in"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden animate-fade-in safe-bottom"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />
       )}
 
       <div className="flex-1 flex flex-col lg:pl-64 min-w-0">
-        <header className="sticky top-0 z-30 backdrop-blur-md bg-bg/80 border-b border-[var(--border)]">
+        <header className="sticky top-0 z-30 backdrop-blur-md bg-bg/80 border-b border-[var(--border)] safe-top">
           <div className="flex items-center justify-between h-16 px-4 sm:px-6">
             <button
               className="lg:hidden p-2 rounded-xl text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-colors duration-fast"

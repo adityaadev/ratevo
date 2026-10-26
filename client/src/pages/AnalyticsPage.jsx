@@ -75,7 +75,7 @@ export default function AnalyticsPage() {
         <p className="text-[var(--text-muted)]">{business.name} — Overview</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
         <StatCard label="QR Scans" value={stats.totalScans} icon={QrCodeIcon} />
         <StatCard label="Ratings" value={stats.totalRatings} icon={StarIcon} />
         <StatCard label="Generated" value={stats.totalGenerated} icon={DocumentIcon} />
@@ -133,13 +133,13 @@ export default function AnalyticsPage() {
                     <span className="w-8 text-right text-sm font-medium text-[var(--text-muted)] mono">
                       {star}★
                     </span>
-                    <div className="flex-1 h-4 bg-white/5 rounded-full overflow-hidden">
+                    <div className="flex-1 min-w-0 h-4 bg-white/5 rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-500 bg-white/20"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    <span className="w-16 text-sm text-[var(--text-subtle)] mono">
+                    <span className="w-16 shrink-0 text-sm text-[var(--text-subtle)] mono truncate">
                       {count} ({percentage.toFixed(0)}%)
                     </span>
                   </div>

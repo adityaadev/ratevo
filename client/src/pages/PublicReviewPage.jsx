@@ -198,7 +198,7 @@ function RatingStep({ rating, onSelect, businessName }) {
           <button
             key={star}
             onClick={() => onSelect(star)}
-            className={`p-2 rounded-lg transition-all ${
+            className={`p-3 rounded-lg transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${
               star <= rating 
                 ? 'text-white bg-white/10' 
                 : 'text-[var(--text-subtle)] hover:text-white hover:bg-white/5'
@@ -224,7 +224,7 @@ function FeedbackStep({ selectedFeedback, onToggle, onSubmit, onSkip, submitting
         <p className="mt-2 text-[var(--text-muted)]">Select all that apply (optional)</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3" role="group" aria-label="Feedback options">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="group" aria-label="Feedback options">
         {FEEDBACK_OPTIONS.slice(0, 7).map((option) => (
           <FeedbackOption
             key={option.id}

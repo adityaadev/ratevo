@@ -7,7 +7,7 @@ export default function PublicLayout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-bg text-[var(--text)]">
-      <header className="sticky top-0 z-40 backdrop-blur-md bg-bg/80 border-b border-[var(--border)]">
+      <header className="sticky top-0 z-40 backdrop-blur-md bg-bg/80 border-b border-[var(--border)] safe-top">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Logo size="md" showTagline />
@@ -28,9 +28,9 @@ export default function PublicLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
-      <footer className="border-t border-[var(--border)] bg-bg/80 backdrop-blur-sm" role="contentinfo">
+      <footer className="border-t border-[var(--border)] bg-bg/80 backdrop-blur-sm safe-bottom" role="contentinfo">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 xl:gap-12">
             <div className="md:col-span-2 lg:col-span-2">
               <Logo size="md" className="mb-3" />
               <p className="text-sm text-[var(--text-muted)] max-w-xs">Turn real experiences into better reviews.</p>

@@ -183,7 +183,7 @@ export default function VerifyOTP() {
           )}
 
           <form onSubmit={(e) => { e.preventDefault(); handleVerify(); }} className="space-y-4">
-            <div className="flex items-center justify-center gap-3" role="group" aria-label="6-digit verification code">
+            <div className="flex items-center justify-center gap-2 sm:gap-3" role="group" aria-label="6-digit verification code">
               {code.map((digit, index) => (
                 <input
                   key={index}
@@ -198,7 +198,7 @@ export default function VerifyOTP() {
                   onPaste={handlePaste}
                   onFocus={() => setFocusedIndex(index)}
                   className={cn(
-                    'w-10 h-12 sm:w-12 sm:h-14 text-center text-2xl sm:text-3xl font-bold text-white',
+                    'w-8 h-10 sm:w-10 sm:h-12 text-center text-xl sm:text-2xl font-bold text-white',
                     'bg-[var(--surface)] border-2 rounded-xl transition-all duration-fast',
                     'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg',
                     focusedIndex === index

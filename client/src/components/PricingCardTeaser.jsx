@@ -63,7 +63,7 @@ export function PricingCardTeaser({ plan }) {
       </ul>
 
       <button className={cn(
-        'w-full px-4 py-2 rounded-xl font-medium text-sm transition-colors duration-fast',
+        'w-full px-4 py-2 rounded-xl font-medium text-sm transition-colors duration-fast min-h-[44px]',
         isYearly
           ? 'bg-white text-black hover:bg-gray-200'
           : 'bg-transparent border border-[var(--border-strong)] text-white hover:bg-[var(--surface-hover)] hover:border-white/30'

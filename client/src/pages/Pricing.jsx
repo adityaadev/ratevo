@@ -146,7 +146,7 @@ function PlanCard({ plan }) {
   const isYearly = plan.id === 'yearly'
 
   return (
-    <div className={`card p-8 relative ${isYearly ? 'border-white/20' : ''}`}>
+    <div className={`card p-8 relative flex flex-col ${isYearly ? 'border-white/20' : ''}`}>
       {plan.label && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span className="bg-white text-black text-xs font-semibold px-3 py-1 rounded-full">
@@ -173,7 +173,7 @@ function PlanCard({ plan }) {
         )}
       </div>
 
-      <ul className="space-y-3 mb-8">
+      <ul className="space-y-3 mb-8 flex-1">
         {features.map((feature, index) => (
           <li key={index} className="flex items-center gap-3 text-[var(--text-muted)]">
             <svg className="w-5 h-5 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
@@ -185,6 +185,7 @@ function PlanCard({ plan }) {
       </ul>
 
       <Button 
+        className="mt-auto" 
         variant={isYearly ? 'primary' : 'secondary'} 
         width="full" 
         size="lg"

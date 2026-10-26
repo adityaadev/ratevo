@@ -16,20 +16,20 @@ export default function Contact() {
             <h2 className="text-lg font-semibold text-white">Company Information</h2>
             <dl className="mt-4 space-y-3 text-[var(--text-muted)]">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <dt className="font-medium text-white min-w-[140px]">Legal name:</dt>
+                <dt className="font-medium text-white min-w-0 sm:min-w-[140px]">Legal name:</dt>
                 <dd>{BUSINESS_CONFIG.legalName}</dd>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <dt className="font-medium text-white min-w-[140px]">Brand:</dt>
+                <dt className="font-medium text-white min-w-0 sm:min-w-[140px]">Brand:</dt>
                 <dd>{BUSINESS_CONFIG.brandName} {BUSINESS_CONFIG.tagline}</dd>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <dt className="font-medium text-white min-w-[140px]">Address:</dt>
+                <dt className="font-medium text-white min-w-0 sm:min-w-[140px]">Address:</dt>
                 <dd>{BUSINESS_CONFIG.address}</dd>
               </div>
               {BUSINESS_CONFIG.gstin && (
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <dt className="font-medium text-white min-w-[140px]">GSTIN:</dt>
+                  <dt className="font-medium text-white min-w-0 sm:min-w-[140px]">GSTIN:</dt>
                   <dd>{BUSINESS_CONFIG.gstin}</dd>
                 </div>
               )}
@@ -40,15 +40,15 @@ export default function Contact() {
             <h2 className="text-lg font-semibold text-white">Support Channels</h2>
             <dl className="mt-4 space-y-3 text-[var(--text-muted)]">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <dt className="font-medium text-white min-w-[140px]">Email:</dt>
+                <dt className="font-medium text-white min-w-0 sm:min-w-[140px]">Email:</dt>
                 <dd><a href={`mailto:${BUSINESS_CONFIG.supportEmail}`} className="underline hover:text-white">{BUSINESS_CONFIG.supportEmail}</a></dd>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <dt className="font-medium text-white min-w-[140px]">Phone:</dt>
+                <dt className="font-medium text-white min-w-0 sm:min-w-[140px]">Phone:</dt>
                 <dd><a href={`tel:+91${BUSINESS_CONFIG.supportPhone}`} className="underline hover:text-white">+91 {BUSINESS_CONFIG.supportPhone.slice(0,5)} {BUSINESS_CONFIG.supportPhone.slice(5)}</a></dd>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <dt className="font-medium text-white min-w-[140px]">WhatsApp:</dt>
+                <dt className="font-medium text-white min-w-0 sm:min-w-[140px]">WhatsApp:</dt>
                 <dd>
                   <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="underline hover:text-white flex items-center gap-1">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -59,7 +59,7 @@ export default function Contact() {
                 </dd>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <dt className="font-medium text-white min-w-[140px]">Hours:</dt>
+                <dt className="font-medium text-white min-w-0 sm:min-w-[140px]">Hours:</dt>
                 <dd>{BUSINESS_CONFIG.supportHours}</dd>
               </div>
             </dl>
