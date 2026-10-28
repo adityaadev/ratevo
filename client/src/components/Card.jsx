@@ -25,7 +25,8 @@ export const Card = forwardRef(function Card({
         'bg-[var(--surface)] rounded-2xl',
         bordered && 'border border-[var(--border)]',
         'shadow-card',
-        hover && 'transition-all duration-base ease-out-expo hover:shadow-card-hover hover:border-[var(--border-strong)] hover:-translate-y-0.5',
+        hover && 'hover-lift',
+        'transition-all duration-base ease-out-expo',
         paddingStyles[padding],
         className
       )}

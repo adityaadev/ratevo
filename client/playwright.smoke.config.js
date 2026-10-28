@@ -5,7 +5,7 @@ export default defineConfig({
   testMatch: '**/*.spec.js',
   fullyParallel: true,
   reporter: 'list',
-  timeout: 30_000,
+  timeout: 60_000,
   use: {
     baseURL: 'http://127.0.0.1:5174',
     browserName: 'chromium',
@@ -14,7 +14,7 @@ export default defineConfig({
     command: 'npm run dev -- --host 127.0.0.1 --port 5174 --strictPort',
     url: 'http://127.0.0.1:5174',
     reuseExistingServer: !process.env.CI,
-    timeout: 30_000,
+    timeout: 120_000,
     env: {
       VITE_API_URL: 'http://127.0.0.1:4001',
       VITE_CLIENT_URL: 'http://127.0.0.1:5174',

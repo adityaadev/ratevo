@@ -1,10 +1,20 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '../components'
 import { BILLING_CONFIG, getPlanFeatures, formatAmount } from '../config/billing'
 import { BUSINESS_CONFIG, getWhatsAppUrl } from '../config/business'
 
 export default function Pricing() {
   const plans = Object.values(BILLING_CONFIG.plans)
+  const navigate = useNavigate()
+
+  const billingEnabled = import.meta.env.VITE_BILLING_UI_ENABLED !== 'false'
+  const paymentsProvider = import.meta.env.VITE_PAYMENTS_PROVIDER || 'manual'
+  const showPayButtons = billingEnabled && paymentsProvider === 'cashfree'
+
+  const handlePay = async (planId) => {
+    // Redirect to signup if not authenticated, then to dashboard/billing
+    navigate(`/signup?plan=${planId}`)
+  }
 
   return (
     <div className="min-h-screen bg-bg py-16 lg:py-24">
@@ -23,7 +33,7 @@ export default function Pricing() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans.map((plan) => (
-            <PlanCard key={plan.id} plan={plan} />
+            <PlanCard key={plan.id} plan={plan} showPayButtons={showPayButtons} onPay={handlePay} />
           ))}
         </div>
 
@@ -93,40 +103,42 @@ export default function Pricing() {
           </div>
         </div>
 
-        <div className="mt-12 max-w-4xl mx-auto">
-          <div className="card p-6 sm:p-8 text-center">
-            <h3 className="text-lg font-semibold text-white mb-3">Online payments are coming soon</h3>
-            <p className="text-[var(--text-muted)] mb-6 max-w-xl mx-auto">
-              To activate a plan now, message us on WhatsApp with the plan name and we&apos;ll set you up manually.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button variant="primary" size="lg" asChild>
-                <a 
-                  href={getWhatsAppUrl(`Hi, I'd like to activate the Monthly plan (₹99/month) for my business.`)}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.182.284-.528.248-.696-.038-.173-.381-.675-.708-1.379-.329-.709-.537-1.148-.64-1.31-.103-.162-.24-.316-.368-.465a4.43 4.43 0 0 0-.516-.381 4.71 4.71 0 0 0-.573-.242c-.417-.096-1.132-.116-1.694.103-.56.218-1.07.578-1.465 1.134-.395.556-.717 1.376-.89 2.023-.173.645-.223 1.307-.196 1.93.027.633.262 1.477.865 2.18.603.703 1.542 2.017 2.955 3.194 1.21 1.006 2.122 1.69 2.68 2.13.558.44 1.328.754 2.236.827.622.05 1.161-.144 1.374-.461.18-.266.26-.594.26-.918 0-.297-.018-.525-.037-.61zM12 2C6.477 2 2 6.477 2 12c0 2.368.881 4.533 2.34 6.207l-.928 3.506 3.63-.96c1.675.924 3.567 1.768 5.46 1.768 5.523 0 10-4.477 10-10S17.523 2 12 2z" />
-                  </svg>
-                  Activate Monthly Plan (₹99/mo)
-                </a>
-              </Button>
-              <Button variant="secondary" size="lg" asChild>
-                <a 
-                  href={getWhatsAppUrl(`Hi, I'd like to activate the Yearly plan (₹1,099/year) for my business.`)}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.182.284-.528.248-.696-.038-.173-.381-.675-.708-1.379-.329-.709-.537-1.148-.64-1.31-.103-.162-.24-.316-.368-.465a4.43 4.43 0 0 0-.516-.381 4.71 4.71 0 0 0-.573-.242c-.417-.096-1.132-.116-1.694.103-.56.218-1.07.578-1.465 1.134-.395.556-.717 1.376-.89 2.023-.173.645-.223 1.307-.196 1.93.027.633.262 1.477.865 2.18.603.703 1.542 2.017 2.955 3.194 1.21 1.006 2.122 1.69 2.68 2.13.558.44 1.328.754 2.236.827.622.05 1.161-.144 1.374-.461.18-.266.26-.594.26-.918 0-.297-.018-.525-.037-.61zM12 2C6.477 2 2 6.477 2 12c0 2.368.881 4.533 2.34 6.207l-.928 3.506 3.63-.96c1.675.924 3.567 1.768 5.46 1.768 5.523 0 10-4.477 10-10S17.523 2 12 2z" />
-                  </svg>
-                  Activate Yearly Plan (₹1,099/yr)
-                </a>
-              </Button>
+        {!showPayButtons && (
+          <div className="mt-12 max-w-4xl mx-auto">
+            <div className="card p-6 sm:p-8 text-center">
+              <h3 className="text-lg font-semibold text-white mb-3">Online payments are coming soon</h3>
+              <p className="text-[var(--text-muted)] mb-6 max-w-xl mx-auto">
+                To activate a plan now, message us on WhatsApp with the plan name and we&apos;ll set you up manually.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button variant="primary" size="lg" asChild>
+                  <a 
+                    href={getWhatsAppUrl(`Hi, I'd like to activate the Monthly plan (₹99/month) for my business.`)}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.182.284-.528.248-.696-.038-.173-.381-.675-.708-1.379-.329-.709-.537-1.148-.64-1.31-.103-.162-.24-.316-.368-.465a4.43 4.43 0 0 0-.516-.381 4.71 4.71 0 0 0-.573-.242c-.417-.096-1.132-.116-1.694.103-.56.218-1.07.578-1.465 1.134-.395.556-.717 1.376-.89 2.023-.173.645-.223 1.307-.196 1.93.027.633.262 1.477.865 2.18.603.703 1.542 2.017 2.955 3.194 1.21 1.006 2.122 1.69 2.68 2.13.558.44 1.328.754 2.236.827.622.05 1.161-.144 1.374-.461.18-.266.26-.594.26-.918 0-.297-.018-.525-.037-.61zM12 2C6.477 2 2 6.477 2 12c0 2.368.881 4.533 2.34 6.207l-.928 3.506 3.63-.96c1.675.924 3.567 1.768 5.46 1.768 5.523 0 10-4.477 10-10S17.523 2 12 2z" />
+                    </svg>
+                    Activate Monthly Plan (₹99/mo)
+                  </a>
+                </Button>
+                <Button variant="secondary" size="lg" asChild>
+                  <a 
+                    href={getWhatsAppUrl(`Hi, I'd like to activate the Yearly plan (₹1,099/year) for my business.`)}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.182.284-.528.248-.696-.038-.173-.381-.675-.708-1.379-.329-.709-.537-1.148-.64-1.31-.103-.162-.24-.316-.368-.465a4.43 4.43 0 0 0-.516-.381 4.71 4.71 0 0 0-.573-.242c-.417-.096-1.132-.116-1.694.103-.56.218-1.07.578-1.465 1.134-.395.556-.717 1.376-.89 2.023-.173.645-.223 1.307-.196 1.93.027.633.262 1.477.865 2.18.603.703 1.542 2.017 2.955 3.194 1.21 1.006 2.122 1.69 2.68 2.13.558.44 1.328.754 2.236.827.622.05 1.161-.144 1.374-.461.18-.266.26-.594.26-.918 0-.297-.018-.525-.037-.61zM12 2C6.477 2 2 6.477 2 12c0 2.368.881 4.533 2.34 6.207l-.928 3.506 3.63-.96c1.675.924 3.567 1.768 5.46 1.768 5.523 0 10-4.477 10-10S17.523 2 12 2z" />
+                    </svg>
+                    Activate Yearly Plan (₹1,099/yr)
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="mt-12 text-center">
           <p className="text-[var(--text-muted)]">
@@ -141,12 +153,12 @@ export default function Pricing() {
   )
 }
 
-function PlanCard({ plan }) {
+function PlanCard({ plan, showPayButtons, onPay }) {
   const features = getPlanFeatures(plan.id)
   const isYearly = plan.id === 'yearly'
 
   return (
-    <div className={`card p-8 relative flex flex-col ${isYearly ? 'border-white/20' : ''}`}>
+    <div className={`card p-8 relative flex flex-col hover-lift ${isYearly ? 'border-white/20' : ''}`}>
       {plan.label && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span className="bg-white text-black text-xs font-semibold px-3 py-1 rounded-full">
@@ -184,15 +196,27 @@ function PlanCard({ plan }) {
         ))}
       </ul>
 
-      <Button 
-        className="mt-auto" 
-        variant={isYearly ? 'primary' : 'secondary'} 
-        width="full" 
-        size="lg"
-        asChild
-      >
-        <Link to="/signup">Start {plan.name} plan</Link>
-      </Button>
+      {showPayButtons ? (
+        <Button 
+          className="mt-auto" 
+          variant={isYearly ? 'primary' : 'secondary'} 
+          width="full" 
+          size="lg"
+          onClick={() => onPay(plan.id)}
+        >
+          Pay ₹{plan.amountDisplay}{isYearly ? '/year' : '/month'}
+        </Button>
+      ) : (
+        <Button 
+          className="mt-auto" 
+          variant={isYearly ? 'primary' : 'secondary'} 
+          width="full" 
+          size="lg"
+          asChild
+        >
+          <Link to="/signup">Start {plan.name} plan</Link>
+        </Button>
+      )}
     </div>
   )
 }

@@ -11,8 +11,10 @@ import businessRoutes from './routes/business.js'
 import reviewRoutes from './routes/review.js'
 import analyticsRoutes from './routes/analytics.js'
 import billingRoutes from './routes/billing.js'
+import cronRoutes from './routes/cron.js'
 import { errorHandler } from './middleware/errorHandler.js'
 import { authMiddleware } from './middleware/auth.js'
+import { rawBodyParser, attachRawBody } from './middleware/rawBodyParser.js'
 
 const app = express()
 const PORT = process.env.PORT || 4001
@@ -26,19 +28,27 @@ app.set('trust proxy', 1)
 
 const clientUrls = process.env.CLIENT_URL.split(',').map(s => s.trim()).filter(Boolean)
 
+// Cashfree domains for CSP (sandbox + production)
+const cashfreeDomains = [
+  'https://sandbox.cashfree.com',
+  'https://api.cashfree.com',
+  'https://sdk.cashfree.com',
+]
+
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", ...cashfreeDomains],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", ...clientUrls, "https://*.supabase.co", "https://generativelanguage.googleapis.com"],
+      connectSrc: ["'self'", ...clientUrls, "https://*.supabase.co", "https://generativelanguage.googleapis.com", ...cashfreeDomains],
+      frameSrc: ["'self'", ...cashfreeDomains],
       frameAncestors: ["'none'"],
       baseUri: ["'self'"],
-      formAction: ["'self'"],
+      formAction: ["'self'", ...cashfreeDomains],
     },
   },
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
@@ -47,7 +57,7 @@ app.use(helmet({
       camera: [],
       microphone: [],
       geolocation: [],
-      payment: [],
+      payment: ['self', ...cashfreeDomains],
     },
   },
   crossOriginOpenerPolicy: { policy: 'same-origin' },
@@ -76,6 +86,11 @@ app.use(cors({
 }))
 
 app.use(morgan('dev'))
+
+// Mount raw body parser for Cashfree webhook BEFORE global json parser
+// This must be on the specific route path to avoid interfering with other routes
+app.use('/api/billing/webhook', rawBodyParser, attachRawBody)
+
 app.use(express.json({ limit: '1mb' }))
 
 app.get('/api/health', (req, res) => {
@@ -87,6 +102,7 @@ app.use('/api/business', authMiddleware, businessRoutes)
 app.use('/api/review', reviewRoutes)
 app.use('/api/analytics', authMiddleware, analyticsRoutes)
 app.use('/api/billing', authMiddleware, billingRoutes)
+app.use('/api/cron', cronRoutes)
 
 app.use(errorHandler)
 

@@ -76,21 +76,21 @@ export default function Signup() {
 
   return (
     <div className="flex-1 flex items-center justify-center py-12 px-4 bg-bg">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+      <div className="w-full max-w-md animate-fade-in-up">
+        <div className="text-center mb-8 animate-fade-in">
           <Logo size="lg" showTagline />
-          <h1 className="text-heading-md font-bold text-white">Create your account</h1>
-          <p className="mt-2 text-[var(--text-muted)]">Start collecting authentic reviews today</p>
+          <h1 className="text-heading-md font-bold text-white animate-fade-in delay-1">Create your account</h1>
+          <p className="mt-2 text-[var(--text-muted)] animate-fade-in delay-2">Start collecting authentic reviews today</p>
         </div>
 
-        <div className="card p-6">
+        <div className="card p-6 animate-fade-in-up delay-1">
           {formError && (
             <div className="mb-4 p-3 bg-[var(--error-bg)] border border-[var(--error-border)] rounded-xl text-[var(--error)] text-sm" role="alert">
               {formError}
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-4 animate-fade-in delay-2">
             <Button
               type="button"
               variant="outline"
@@ -102,7 +102,7 @@ export default function Signup() {
               Continue with Google
             </Button>
 
-            <div className="relative">
+            <div className="relative animate-fade-in delay-3">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-[var(--border)]" />
               </div>
@@ -111,8 +111,8 @@ export default function Signup() {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+            <form onSubmit={handleSubmit} className="space-y-4 animate-fade-in delay-3">
+            <div className="animate-fade-in delay-4">
               <label htmlFor="email" className="label">Email</label>
               <input
                 id="email"
@@ -127,7 +127,7 @@ export default function Signup() {
               />
             </div>
             
-            <div>
+            <div className="animate-fade-in delay-5">
               <label htmlFor="password" className="label">Password</label>
               <input
                 id="password"
@@ -143,7 +143,7 @@ export default function Signup() {
               />
             </div>
             
-            <div>
+            <div className="animate-fade-in delay-6">
               <label htmlFor="confirmPassword" className="label">Confirm Password</label>
               <input
                 id="confirmPassword"

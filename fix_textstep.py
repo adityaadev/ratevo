@@ -1,0 +1,93 @@
+with open('client/src/pages/PublicReviewPage.jsx', 'r') as f:
+    content = f.read()
+
+old = '''function TextStep({ customerText, onChange, onBack, onGenerate, generating, sessionId, error }) {
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-heading-md font-bold text-white">Anything else to add?</h2>
+        <p className="mt-2 text-[var(--text-muted)]">Your own words help make the review more authentic (optional)</p>
+      </div>
+
+      <textarea
+        value={customerText}
+        onChange={(e) => onChange(e.target.value)}
+        rows={4}
+        className="input"
+        placeholder="The doctor explained everything properly and the staff was very patient..."
+        maxLength={500}
+      />
+
+      {error && <p role="alert" className="text-sm text-[var(--error)]">{error}</p>}
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button
+          onClick={onBack}
+          type="button"
+          variant="secondary"
+          width="full"
+          disabled={generating}
+        >
+          Back
+        </Button>
+        <Button
+          onClick={onGenerate}
+          variant="primary"
+          width="full"
+          disabled={generating}
+        >
+          {generating ? 'Generating Review...' : error ? 'Try again' : 'Generate Review'}
+        </Button>
+      </div>
+    </div>
+  )
+}'''
+
+new = '''function TextStep({ customerText, onChange, onBack, onGenerate, generating, sessionId, error }) {
+  return (
+    <div className="space-y-6 animate-fade-in-up">
+      <div className="text-center animate-fade-in">
+        <h2 className="text-heading-md font-bold text-white">Anything else to add?</h2>
+        <p className="mt-2 text-[var(--text-muted)]">Your own words help make the review more authentic (optional)</p>
+      </div>
+
+      <textarea
+        value={customerText}
+        onChange={(e) => onChange(e.target.value)}
+        rows={4}
+        className="input"
+        placeholder="The doctor explained everything properly and the staff was very patient..."
+        maxLength={500}
+      />
+
+      {error && <p role="alert" className="text-sm text-[var(--error)] animate-fade-in">{error}</p>}
+
+      <div className="flex flex-col sm:flex-row gap-3 animate-fade-in delay-3">
+        <Button
+          onClick={onBack}
+          type="button"
+          variant="secondary"
+          width="full"
+          disabled={generating}
+        >
+          Back
+        </Button>
+        <Button
+          onClick={onGenerate}
+          variant="primary"
+          width="full"
+          disabled={generating}
+        >
+          {generating ? 'Generating Review...' : error ? 'Try again' : 'Generate Review'}
+        </Button>
+      </div>
+    </div>
+  )
+}'''
+
+content = content.replace(old, new)
+
+with open('client/src/pages/PublicReviewPage.jsx', 'w') as f:
+    f.write(content)
+
+print('Done')

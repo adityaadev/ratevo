@@ -39,3 +39,8 @@ export const loginSchema = z.object({
   email: z.string().email('Invalid email'),
   password: z.string().min(1, 'Password is required'),
 })
+
+export const createOrderSchema = z.object({
+  business_id: z.string().uuid('Invalid business ID'),
+  plan_id: z.enum(['monthly', 'yearly'], { errorMap: () => ({ message: 'Plan must be monthly or yearly' }) }),
+})

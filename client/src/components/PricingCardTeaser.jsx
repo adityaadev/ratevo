@@ -1,12 +1,16 @@
 import { cn } from '../utils/helpers'
 import { formatAmount } from '../config/billing'
+import { Button } from './Button'
 
 export function PricingCardTeaser({ plan }) {
   const isYearly = plan.id === 'yearly'
+  const billingEnabled = import.meta.env.VITE_BILLING_UI_ENABLED !== 'false'
+  const paymentsProvider = import.meta.env.VITE_PAYMENTS_PROVIDER || 'manual'
+  const showPayButtons = billingEnabled && paymentsProvider === 'cashfree'
 
   return (
     <div className={cn(
-      'card p-6 relative',
+      'card p-6 relative hover-lift',
       isYearly && 'border-white/20'
     )}>
       {plan.label && (
@@ -62,14 +66,25 @@ export function PricingCardTeaser({ plan }) {
         </li>
       </ul>
 
-      <button className={cn(
-        'w-full px-4 py-2 rounded-xl font-medium text-sm transition-colors duration-fast min-h-[44px]',
-        isYearly
-          ? 'bg-white text-black hover:bg-gray-200'
-          : 'bg-transparent border border-[var(--border-strong)] text-white hover:bg-[var(--surface-hover)] hover:border-white/30'
-      )}>
-        Start {plan.name} plan
-      </button>
+      {showPayButtons ? (
+        <Button
+          variant={isYearly ? 'primary' : 'secondary'}
+          width="full"
+          size="md"
+          onClick={() => window.location.href = `/signup?plan=${plan.id}`}
+        >
+          Pay ₹{plan.amountDisplay}{isYearly ? '/year' : '/month'}
+        </Button>
+      ) : (
+        <Button
+          variant={isYearly ? 'primary' : 'secondary'}
+          width="full"
+          size="md"
+          asChild
+        >
+          <a href="/signup">Start {plan.name} plan</a>
+        </Button>
+      )}
     </div>
   )
 }

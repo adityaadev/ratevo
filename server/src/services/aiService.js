@@ -67,10 +67,12 @@ function extractRetryDelay(err) {
 }
 
 // Fallback chain: primary → backup models (all support generateContent, non-preview)
+// Prioritize models that are currently working and fast
 const MODEL_CHAIN = [
-  'gemini-3.8-flash',
-  'gemini-3.5-flash',
-  'gemini-2.5-flash',
+  'gemini-3.6-flash',    // Fast & working (primary)
+  'gemini-3.5-flash',    // Fast & working
+  'gemini-flash-latest', // Latest available
+  'gemini-3.8-flash',    // May have 503/high demand
 ]
 const GENERATION_TIMEOUT_MS = 10000
 const DEFAULT_MODEL = MODEL_CHAIN[0]

@@ -42,7 +42,7 @@ export const Button = forwardRef(function Button({
     'transition-all duration-fast ease-out-expo',
     'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg',
     'disabled:opacity-50 disabled:cursor-not-allowed',
-    'active:scale-[0.98]',
+    'active-scale active:scale-[0.97]',
     variantStyles[variant],
     sizeStyles[size],
     widthStyles[width],

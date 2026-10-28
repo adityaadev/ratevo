@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { reviewApi, businessApi } from '../services/api'
 import { trackEvent } from '../utils/analytics'
-import { getReviewGenerationErrorMessage } from '../utils/helpers'
+import { getReviewGenerationErrorMessage, cn } from '../utils/helpers'
 import { Button, Logo } from '../components'
+import { flushSync } from 'react-dom'
 
 const FEEDBACK_OPTIONS = [
   { id: 'helpful_staff', label: 'Helpful staff', icon: UsersIcon },
@@ -53,8 +54,10 @@ export default function PublicReviewPage() {
 
   const handleRatingSelect = (stars) => {
     setRating(stars)
-    setStep('feedback')
-    trackEvent('rating_submitted', { businessSlug, business_id: business?.id, rating: stars })
+    flushSync(() => {
+      setStep('feedback')
+    })
+    // trackEvent('rating_submitted', { businessSlug, business_id: business?.id, rating: stars })
   }
 
   const toggleFeedback = (id) => {
@@ -187,8 +190,8 @@ export default function PublicReviewPage() {
 
 function RatingStep({ rating, onSelect, businessName }) {
   return (
-    <div className="space-y-6">
-      <div className="text-center">
+    <div className="space-y-6 animate-fade-in-up">
+      <div className="text-center animate-fade-in">
         <h2 className="text-heading-md font-bold text-white">How was your experience?</h2>
         <p className="mt-2 text-[var(--text-muted)]">Rate {businessName}</p>
       </div>
@@ -198,13 +201,12 @@ function RatingStep({ rating, onSelect, businessName }) {
           <button
             key={star}
             onClick={() => onSelect(star)}
-            className={`p-3 rounded-lg transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${
+            className={`p-3 rounded-lg transition-all min-h-[44px] min-w-[44px] flex items-center justify-center star-pop ${
               star <= rating 
                 ? 'text-white bg-white/10' 
                 : 'text-[var(--text-subtle)] hover:text-white hover:bg-white/5'
             }`}
             aria-label={`${star} star${star !== 1 ? 's' : ''}`}
-            aria-checked={star <= rating}
           >
             <svg className="w-12 h-12" fill={star <= rating ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
@@ -219,13 +221,13 @@ function RatingStep({ rating, onSelect, businessName }) {
 function FeedbackStep({ selectedFeedback, onToggle, onSubmit, onSkip, submitting }) {
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <div className="text-center">
+      <div className="text-center animate-fade-in">
         <h2 className="text-heading-md font-bold text-white">What did you like?</h2>
         <p className="mt-2 text-[var(--text-muted)]">Select all that apply (optional)</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="group" aria-label="Feedback options">
-        {FEEDBACK_OPTIONS.slice(0, 7).map((option) => (
+        {FEEDBACK_OPTIONS.slice(0, 7).map((option, index) => (
           <FeedbackOption
             key={option.id}
             option={option}
@@ -235,7 +237,7 @@ function FeedbackStep({ selectedFeedback, onToggle, onSubmit, onSkip, submitting
         ))}
       </div>
 
-      <div className="pt-4 border-t border-[var(--border)]">
+      <div className="pt-4 border-t border-[var(--border)] animate-fade-in delay-4">
         <Button
           type="button"
           variant="secondary"
@@ -261,18 +263,22 @@ function FeedbackStep({ selectedFeedback, onToggle, onSubmit, onSkip, submitting
 
 function FeedbackOption({ option, selected, onToggle }) {
   return (
-    <button
-      type="button"
-      onClick={() => onToggle(option.id)}
-      className={`p-4 rounded-xl border-2 text-left transition-all flex items-center gap-3 ${
+    <label
+      className={cn(
+        'p-4 rounded-xl border-2 text-left transition-all flex items-center gap-3 hover-lift cursor-pointer',
         selected
           ? 'border-white bg-white/5'
           : 'border-[var(--border)] hover:border-white/50 hover:bg-white/5'
-      }`}
-      role="checkbox"
-      aria-checked={selected}
+      )}
     >
-      <div className={`p-2 rounded-lg ${selected ? 'bg-white/10 text-white' : 'bg-white/5 text-[var(--text-subtle)]'}`}>
+      <input
+        type="checkbox"
+        checked={selected}
+        onChange={() => onToggle(option.id)}
+        className="sr-only"
+        aria-label={option.label}
+      />
+      <div className={`p-2 rounded-lg transition-colors duration-fast ${selected ? 'bg-white/10 text-white' : 'bg-white/5 text-[var(--text-subtle)]'}`}>
         <option.icon className="w-5 h-5" />
       </div>
       <span className="text-sm font-medium text-white">{option.label}</span>
@@ -281,14 +287,14 @@ function FeedbackOption({ option, selected, onToggle }) {
           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
         </svg>
       )}
-    </button>
+    </label>
   )
 }
 
 function TextStep({ customerText, onChange, onBack, onGenerate, generating, sessionId, error }) {
   return (
-    <div className="space-y-6">
-      <div className="text-center">
+    <div className="space-y-6 animate-fade-in-up">
+      <div className="text-center animate-fade-in">
         <h2 className="text-heading-md font-bold text-white">Anything else to add?</h2>
         <p className="mt-2 text-[var(--text-muted)]">Your own words help make the review more authentic (optional)</p>
       </div>
@@ -302,9 +308,9 @@ function TextStep({ customerText, onChange, onBack, onGenerate, generating, sess
         maxLength={500}
       />
 
-      {error && <p role="alert" className="text-sm text-[var(--error)]">{error}</p>}
+      {error && <p role="alert" className="text-sm text-[var(--error)] animate-fade-in">{error}</p>}
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-3 animate-fade-in delay-3">
         <Button
           onClick={onBack}
           type="button"
@@ -329,10 +335,10 @@ function TextStep({ customerText, onChange, onBack, onGenerate, generating, sess
 
 function GeneratingStep() {
   return (
-    <div className="space-y-6 text-center">
+    <div className="space-y-6 text-center animate-fade-in-up">
       <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mx-auto"></div>
-      <h2 className="text-xl font-bold text-white">Generating your review...</h2>
-      <p className="text-[var(--text-muted)]">AI is creating a natural review from your feedback</p>
+      <h2 className="text-xl font-bold text-white animate-fade-in delay-1">Generating your review...</h2>
+      <p className="text-[var(--text-muted)] animate-fade-in delay-2">AI is creating a natural review from your feedback</p>
     </div>
   )
 }

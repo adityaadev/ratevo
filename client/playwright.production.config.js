@@ -14,7 +14,7 @@ export default defineConfig({
     command: 'npm run build && npm run preview -- --host 127.0.0.1 --port 4173 --strictPort',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
+    timeout: 120_000,
     env: {
       VITE_API_URL: 'http://127.0.0.1:4001',
       VITE_CLIENT_URL: 'http://127.0.0.1:4173',

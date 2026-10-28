@@ -94,3 +94,16 @@ export const reviewApi = {
 export const analyticsApi = {
   get: (businessId) => api.get(`/api/analytics/${businessId}`),
 }
+
+export const billingApi = {
+  getStatus: (businessId, orderId) => {
+    const params = new URLSearchParams({ business_id: businessId })
+    if (orderId) params.append('order_id', orderId)
+    return api.get(`/api/billing/status?${params.toString()}`)
+  },
+  createOrder: (businessId, planId) => api.post('/api/billing/orders', { business_id: businessId, plan_id: planId }),
+  verifyOrder: (orderId, businessId) => api.get(`/api/billing/verify?order_id=${orderId}&business_id=${businessId}`),
+  getPayments: (businessId) => api.get(`/api/billing/payments?business_id=${businessId}`),
+  getSubscriptions: (businessId) => api.get(`/api/billing/subscriptions?business_id=${businessId}`),
+  initializeTrial: (businessId) => api.post('/api/billing/initialize-trial', { business_id: businessId }),
+}

@@ -9,6 +9,7 @@ import Signup from './pages/Signup'
 import VerifyOTP from './pages/VerifyOTP'
 import PublicReviewPage from './pages/PublicReviewPage'
 import ReviewResultPage from './pages/ReviewResultPage'
+import BillingResult from './pages/BillingResult'
 import NotFound from './pages/NotFound'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -23,6 +24,8 @@ const Contact = lazy(() => import('./pages/Contact'))
 const Pricing = lazy(() => import('./pages/Pricing'))
 const HowItWorks = lazy(() => import('./pages/HowItWorks'))
 const FAQ = lazy(() => import('./pages/FAQ'))
+const BillingSuccess = lazy(() => import('./pages/BillingSuccess'))
+const BillingFailed = lazy(() => import('./pages/BillingFailed'))
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth()
@@ -131,6 +134,33 @@ function App() {
             </div>
           }>
             <Contact />
+          </Suspense>
+        } />
+        <Route path="/billing/result" element={
+          <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
+            </div>
+          }>
+            <BillingResult />
+          </Suspense>
+        } />
+        <Route path="/billing/success" element={
+          <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
+            </div>
+          }>
+            <BillingSuccess />
+          </Suspense>
+        } />
+        <Route path="/billing/failed" element={
+          <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
+            </div>
+          }>
+            <BillingFailed />
           </Suspense>
         } />
       </Route>

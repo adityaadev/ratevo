@@ -15,8 +15,9 @@ const routes = [
   '/verify-otp',
   '/pricing',
   '/faq',
-  '/billing/success',
-  '/billing/failed',
+  '/billing/success?order_id=smoke-order&business_id=smoke-business',
+  '/billing/failed?order_id=smoke-order&business_id=smoke-business',
+  '/billing/result?order_id=smoke-order&business_id=smoke-business',
   '/terms',
   '/privacy',
   '/refund',
@@ -34,11 +35,47 @@ const routes = [
 
 async function mockApi(page) {
   await page.route('**/api/**', async (route) => {
-    const { pathname } = new URL(route.request().url())
+    const { pathname, searchParams } = new URL(route.request().url())
     const method = route.request().method()
 
     if (pathname.endsWith('/review/events')) {
       await route.fulfill({ status: 204 })
+      return
+    }
+
+    // Billing status endpoint
+    if (pathname.includes('/billing/status')) {
+      const businessId = searchParams.get('business_id')
+      const orderId = searchParams.get('order_id')
+      const mockBusiness = {
+        id: businessId || 'smoke-business',
+        subscription_status: 'active',
+        subscription_plan: 'monthly',
+        paid_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        trial_ends_at: null,
+        trial_used: true,
+        is_trial: false,
+        is_active: true,
+        is_expired: false,
+        in_grace: false,
+        days_left: 30,
+        ...(orderId && { order_id: orderId }),
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockBusiness),
+      })
+      return
+    }
+
+    // Billing verify endpoint
+    if (pathname.includes('/billing/verify')) {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ verified: true, paid_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() }),
+      })
       return
     }
 
@@ -71,6 +108,8 @@ async function mockApi(page) {
         },
         recentActivity: [],
       }
+    } else if (pathname.startsWith('/api/billing/')) {
+      body = {}
     }
 
     await route.fulfill({

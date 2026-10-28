@@ -71,6 +71,7 @@ export const Input = forwardRef(function Input({
             icon && !floatingLabel ? 'pl-10' : '',
             iconRight && 'pr-10',
             error && 'border-[var(--error)] focus:ring-[var(--error)]',
+            'focus-ring-animate',
             className
           )}
           aria-invalid={error ? 'true' : 'false'}

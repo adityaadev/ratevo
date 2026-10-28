@@ -4,6 +4,7 @@ const ALLOWED_HOSTNAMES = new Set([
   'google.com',
   'www.google.com',
   'maps.google.com',
+  'g.page',
 ])
 
 const WRITEREVIEW_HOSTNAMES = new Set([

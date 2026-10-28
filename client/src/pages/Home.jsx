@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Button, PricingCardTeaser } from '../components'
 import { BILLING_CONFIG } from '../config/billing'
+import { cn } from '../utils/helpers'
 
 export default function Home() {
   const plans = Object.values(BILLING_CONFIG.plans)
@@ -10,18 +11,18 @@ export default function Home() {
       <section className="relative overflow-hidden py-16 lg:py-24">
         <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-transparent" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-[800px] mx-auto">
+          <div className="text-center max-w-[800px] mx-auto animate-fade-in-up">
             <h1 className="font-semibold text-white tracking-[-0.03em] leading-[1.1] text-balance"
               style={{ fontSize: 'clamp(2.25rem, 6vw, 4rem)', lineHeight: '1.1', letterSpacing: '-0.03em' }}>
               Turn real experiences into <span className="text-white">better reviews</span>
             </h1>
-            <p className="mt-6 text-base sm:text-lg text-[var(--text-muted)] max-w-[560px] mx-auto leading-relaxed">
+            <p className="mt-6 text-base sm:text-lg text-[var(--text-muted)] max-w-[560px] mx-auto leading-relaxed animate-fade-in delay-1">
               Customers scan a QR code, share real feedback, and get a ready-to-edit Google review draft in seconds.
             </p>
-            <p className="mt-6 text-base text-[var(--text-muted)] max-w-[640px] mx-auto leading-relaxed">
+            <p className="mt-6 text-base text-[var(--text-muted)] max-w-[640px] mx-auto leading-relaxed animate-fade-in delay-2">
               Ratevo is a web-based software (SaaS) that helps businesses collect customer feedback through QR codes and draft a Google review that the customer edits and posts themselves.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in delay-3">
               <Button variant="primary" size="lg" asChild>
                 <Link to="/signup">Get Started</Link>
               </Button>
@@ -90,24 +91,24 @@ export default function Home() {
 
       <section id="how-it-works" className="py-16 lg:py-24 bg-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-16 animate-fade-in-up">
             <h2 className="text-heading-lg font-bold text-white tracking-tight">
               How it works
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Step number="1" title="Scan the QR code" description="Customer opens their camera, scans the code, and lands on a simple rating page.">
+            <Step number="1" title="Scan the QR code" description="Customer opens their camera, scans the code, and lands on a simple rating page." delay="1">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
               </svg>
             </Step>
-            <Step number="2" title="Share your feedback" description="Rate the experience, pick what stood out, and add a sentence in your own words.">
+            <Step number="2" title="Share your feedback" description="Rate the experience, pick what stood out, and add a sentence in your own words." delay="2">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </Step>
-            <Step number="3" title="Copy and post on Google" description="AI generates a natural draft. Customer reviews, copies, and posts directly on Google with one click.">
+            <Step number="3" title="Copy and post on Google" description="AI generates a natural draft. Customer reviews, copies, and posts directly on Google with one click." delay="3">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
               </svg>
@@ -145,9 +146,9 @@ export default function Home() {
   )
 }
 
-function Step({ number, title, description, children }) {
+function Step({ number, title, description, children, delay }) {
   return (
-    <div className="card p-6 relative animate-fade-in-up">
+    <div className={cn('card p-6 relative animate-fade-in-up', delay && `delay-${delay}`)}>
       <span className="absolute -top-3 left-6 w-6 h-6 rounded-full bg-white text-black text-xs font-semibold flex items-center justify-center mono">
         {number}
       </span>
