@@ -12,8 +12,8 @@ function getQrSize() {
 }
 
 const DESIGN_OPTIONS = {
-  light: { label: 'Light', bg: '#FFFFFF', qrFg: '#000000', text: '#000000', subText: '#4B4B4B', border: '#E5E5E5' },
-  dark: { label: 'Dark', bg: '#000000', qrFg: '#000000', text: '#FFFFFF', subText: '#E5E5E5', border: '#333333' }
+  light: { label: 'Light', bg: '#FFFFFF', qrFg: '#000000', qrBg: '#FFFFFF', text: '#000000', subText: '#4B4B4B', border: '#E5E5E5' },
+  dark: { label: 'Dark', bg: '#000000', qrFg: '#FFFFFF', qrBg: '#000000', text: '#FFFFFF', subText: '#E5E5E5', border: '#333333' }
 }
 
 export default function QrCodePage() {
@@ -68,13 +68,19 @@ export default function QrCodePage() {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const colors = DESIGN_OPTIONS[design]
+    
+    // Fixed sizing for consistent output (not responsive to window)
+    const qrModuleSize = 300
     const padding = 40
-    const qrModuleSize = 300 // 300x300 QR
+    const qrMargin = 24  // Quiet zone around QR
     const headerHeight = 80
     const footerHeight = 50
-    const totalHeight = headerHeight + qrModuleSize + footerHeight + padding * 2
-    const totalWidth = qrModuleSize + padding * 2
+    
+    // Total dimensions with explicit spacing
+    const totalWidth = qrModuleSize + qrMargin * 2 + padding * 2
+    const totalHeight = headerHeight + qrMargin + qrModuleSize + qrMargin + footerHeight + padding * 2
 
+    // High-DPI canvas (2x)
     canvas.width = totalWidth * 2
     canvas.height = totalHeight * 2
     ctx.scale(2, 2)
@@ -83,42 +89,28 @@ export default function QrCodePage() {
     ctx.fillStyle = colors.bg
     ctx.fillRect(0, 0, totalWidth, totalHeight)
 
-    // Border
-    ctx.strokeStyle = colors.border
-    ctx.lineWidth = 2
-    ctx.strokeRect(padding, padding, qrModuleSize, qrModuleSize)
-
-    // Business name
+    // Business name - centered in header area
     ctx.fillStyle = colors.text
     ctx.font = 'bold 24px Geist, system-ui, sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     let businessName = business?.name || 'Ratevo'
     // Truncate if too long
-    const maxNameWidth = qrModuleSize - 20
-    const metrics = ctx.measureText(businessName)
-    if (metrics.width > maxNameWidth) {
+    const maxNameWidth = totalWidth - padding * 2 - 20
+    if (ctx.measureText(businessName).width > maxNameWidth) {
       ctx.font = 'bold 20px Geist, system-ui, sans-serif'
       while (ctx.measureText(businessName).width > maxNameWidth && businessName.length > 3) {
         businessName = businessName.slice(0, -1)
       }
       businessName += '...'
     }
-    ctx.fillText(businessName, totalWidth / 2, padding / 2)
+    // Center vertically in header area
+    ctx.fillText(businessName, totalWidth / 2, padding + headerHeight / 2)
 
-    // Brand text
-    ctx.fillStyle = colors.subText
-    ctx.font = '14px Geist, system-ui, sans-serif'
-    ctx.fillText('RATEVO BY XOIEX', totalWidth / 2, totalHeight - footerHeight / 2)
-
-    // Generate QR code as image and draw it
+    // Generate QR code as image first (needed for positioning)
     const qrCanvas = document.createElement('canvas')
-    const qrCtx = qrCanvas.getContext('2d')
     qrCanvas.width = qrModuleSize
     qrCanvas.height = qrModuleSize
-
-    // Use QRCode library to generate to canvas
-    // We'll create a temporary QRCode component render to canvas
     await new Promise((resolve, reject) => {
       QRCodeLib.toCanvas(qrCanvas, qrUrl, {
         width: qrModuleSize,
@@ -128,20 +120,28 @@ export default function QrCodePage() {
           light: design === 'light' ? '#FFFFFF' : '#000000'
         },
         errorCorrectionLevel: 'M'
-      }, (err) => {
-        if (err) {
-          console.error('QR generation error:', err)
-          reject(err)
-        } else {
-          resolve()
-        }
-      })
+      }, (err) => err ? reject(err) : resolve())
     })
 
-    // Draw QR code onto main canvas
-    const qrX = padding
-    const qrY = padding + headerHeight / 2 - qrModuleSize / 2
+    // QR position - centered horizontally, placed after header with margin
+    const qrX = padding + qrMargin
+    const qrY = padding + headerHeight + qrMargin
+
+    // For dark design, draw white square behind QR first
+    if (design === 'dark') {
+      const bgPadding = 12
+      ctx.fillStyle = '#FFFFFF'
+      ctx.fillRect(qrX - bgPadding, qrY - bgPadding, qrModuleSize + bgPadding * 2, qrModuleSize + bgPadding * 2)
+    }
+    
+    // Draw QR code
     ctx.drawImage(qrCanvas, qrX, qrY, qrModuleSize, qrModuleSize)
+
+    // Brand text - centered in footer area (below QR with margin)
+    ctx.fillStyle = colors.subText
+    ctx.font = '14px Geist, system-ui, sans-serif'
+    const footerY = padding + headerHeight + qrMargin + qrModuleSize + qrMargin + footerHeight / 2
+    ctx.fillText('RATEVO BY XOIEX', totalWidth / 2, footerY)
 
     return canvas
   }
@@ -197,7 +197,7 @@ export default function QrCodePage() {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto safe-top safe-bottom safe-horizontal">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent"></div>
         </div>
@@ -207,7 +207,7 @@ export default function QrCodePage() {
 
   if (!business) {
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto safe-top safe-bottom safe-horizontal">
         <div className="text-center py-16">
           <svg className="mx-auto h-16 w-16 text-[var(--text-subtle)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
@@ -220,7 +220,7 @@ export default function QrCodePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto safe-top safe-bottom safe-horizontal">
       <div className="mb-8">
         <h1 className="text-heading-lg font-bold text-white">QR Code</h1>
         <p className="text-[var(--text-muted)]">Share this QR code to collect customer reviews</p>
@@ -259,13 +259,14 @@ export default function QrCodePage() {
 
         {/* Preview & QR Code */}
         <div className="text-center">
-          <div className="inline-block p-4 bg-white rounded-xl border border-white/10">
+          <div className={`inline-block p-4 rounded-xl border ${DESIGN_OPTIONS[selectedDesign].border} bg-[${DESIGN_OPTIONS[selectedDesign].bg}] qr-preview-transition`}>
             <QRCode
+              key={selectedDesign}
               value={qrUrl}
               size={qrSize}
               level="M"
               includeMargin={true}
-              bgColor={DESIGN_OPTIONS[selectedDesign].bg === '#FFFFFF' ? '#FFFFFF' : '#000000'}
+              bgColor={DESIGN_OPTIONS[selectedDesign].bg}
               fgColor={DESIGN_OPTIONS[selectedDesign].qrFg}
             />
           </div>
